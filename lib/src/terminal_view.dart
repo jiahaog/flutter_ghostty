@@ -35,6 +35,7 @@ class _TerminalViewState extends State<TerminalView> {
   int _cols = 80;
   int _rows = 24;
   bool _initialized = false;
+  bool _firstFocusSent = false;
 
   @override
   void initState() {
@@ -191,6 +192,10 @@ class _TerminalViewState extends State<TerminalView> {
       autofocus: true,
       onFocusChange: (focused) {
         if (_initialized) {
+          if (!_firstFocusSent) {
+            _firstFocusSent = true;
+            return;
+          }
           _state.encodeFocusAndWrite(focused);
         }
       },
