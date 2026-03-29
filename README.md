@@ -1,17 +1,66 @@
 # flutter_ghostty
 
-A new Flutter project.
+Flutter Embedder for `libghostty`.
 
-## Getting Started
+Taking reference from https://github.com/ghostty-org/ghostling.
 
-This project is a starting point for a Flutter application.
+All code is written here by AI.
 
-A few resources to get you started if this is your first Flutter project:
+## Requirements
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **macOS** (currently the only supported platform)
+- **Zig 0.15.2** - Required for building libghostty
+- **Flutter SDK**
+- **Xcode Command Line Tools**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Setup & Build
+
+### 1. Clone the repository with submodules
+
+```bash
+git clone --recursive https://github.com/jiahaog/flutter_ghostty.git
+cd flutter_ghostty
+```
+
+If you've already cloned without `--recursive`, fetch the submodules:
+
+```bash
+git submodule update --init --recursive
+```
+
+### 2. Install Zig toolchain
+
+Install Zig version `0.15.2` and ensure it is on your `PATH`.
+
+### 3. Build libghostty
+
+```bash
+./scripts/build_libghostty.sh
+```
+
+This generates:
+- Shared library used by the app: `ghostty/zig-out/lib/libghostty-vt.dylib`
+- Headers: `ghostty/zig-out/include/ghostty/vt.h`
+
+### 4. Build PTY helper
+
+```bash
+mkdir -p macos/Libs
+clang -shared -o macos/Libs/libpty.dylib native/pty.c \
+  -framework CoreFoundation -lutil \
+  -install_name @rpath/libpty.dylib
+```
+
+### 5. Generate Dart FFI bindings
+
+```bash
+dart run ffigen --config ffigen.yaml
+```
+
+### 6. Run the app
+
+Currently only works on macOS.
+
+```bash
+flutter run
+```
