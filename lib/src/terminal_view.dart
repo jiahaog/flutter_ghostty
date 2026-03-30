@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'ghostty_bindings.g.dart';
-import 'ghostty.dart';
 import 'terminal_state.dart';
 import 'terminal_painter.dart';
 import 'key_map.dart';
@@ -26,7 +25,6 @@ class TerminalView extends StatefulWidget {
 }
 
 class _TerminalViewState extends State<TerminalView> {
-  late final Ghostty _ghostty;
   late final TerminalState _state;
   late Timer _frameTimer;
 
@@ -40,21 +38,25 @@ class _TerminalViewState extends State<TerminalView> {
   @override
   void initState() {
     super.initState();
-    _ghostty = Ghostty();
-    _state = TerminalState(_ghostty);
+    _state = TerminalState();
     _measureCell();
   }
 
   void _measureCell() {
-    final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
-      fontFamily: widget.fontFamily,
-      fontSize: widget.fontSize,
-    ))
-      ..pushStyle(ui.TextStyle(
-        fontFamily: widget.fontFamily,
-        fontSize: widget.fontSize,
-      ))
-      ..addText('M');
+    final builder =
+        ui.ParagraphBuilder(
+            ui.ParagraphStyle(
+              fontFamily: widget.fontFamily,
+              fontSize: widget.fontSize,
+            ),
+          )
+          ..pushStyle(
+            ui.TextStyle(
+              fontFamily: widget.fontFamily,
+              fontSize: widget.fontSize,
+            ),
+          )
+          ..addText('M');
 
     final paragraph = builder.build()
       ..layout(const ui.ParagraphConstraints(width: double.infinity));
@@ -68,8 +70,8 @@ class _TerminalViewState extends State<TerminalView> {
     _initialized = true;
 
     _cols = ((constraints.maxWidth - 2 * widget.padding) / _cellWidth).floor();
-    _rows =
-        ((constraints.maxHeight - 2 * widget.padding) / _cellHeight).floor();
+    _rows = ((constraints.maxHeight - 2 * widget.padding) / _cellHeight)
+        .floor();
     if (_cols < 1) _cols = 1;
     if (_rows < 1) _rows = 1;
 
@@ -88,10 +90,10 @@ class _TerminalViewState extends State<TerminalView> {
   void _handleResize(BoxConstraints constraints) {
     if (!_initialized) return;
 
-    final newCols =
-        ((constraints.maxWidth - 2 * widget.padding) / _cellWidth).floor();
-    final newRows =
-        ((constraints.maxHeight - 2 * widget.padding) / _cellHeight).floor();
+    final newCols = ((constraints.maxWidth - 2 * widget.padding) / _cellWidth)
+        .floor();
+    final newRows = ((constraints.maxHeight - 2 * widget.padding) / _cellHeight)
+        .floor();
 
     if (newCols > 0 && newRows > 0 && (newCols != _cols || newRows != _rows)) {
       _cols = newCols;
@@ -176,7 +178,9 @@ class _TerminalViewState extends State<TerminalView> {
   }
 
   GhosttyMouseButton _mapPointerButton(int buttons) {
-    if (buttons & 0x01 != 0) return GhosttyMouseButton.GHOSTTY_MOUSE_BUTTON_LEFT;
+    if (buttons & 0x01 != 0) {
+      return GhosttyMouseButton.GHOSTTY_MOUSE_BUTTON_LEFT;
+    }
     if (buttons & 0x02 != 0) {
       return GhosttyMouseButton.GHOSTTY_MOUSE_BUTTON_RIGHT;
     }

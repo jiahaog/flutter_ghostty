@@ -1,11 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-cd "$PROJECT_DIR/ghostty"
-zig build lib-vt
-
-echo "Built libghostty-vt at ghostty/zig-out/lib/"
-ls -la zig-out/lib/libghostty-vt*
+"$SCRIPT_DIR/build_native_deps.sh" "$@"

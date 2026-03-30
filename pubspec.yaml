@@ -32,6 +32,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   ffi: ^2.1.0
+  code_assets: ^1.0.0
+  hooks: ^1.0.0
 
 dev_dependencies:
   flutter_test:

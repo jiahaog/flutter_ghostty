@@ -9,6 +9,7 @@ headers:
     - '**ghostty/vt/**'
 compiler-opts:
   - '-Ighostty/zig-out/include'
+ffi-native:
 comments:
   style: any
   length: full

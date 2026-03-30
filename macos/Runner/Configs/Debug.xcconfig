@@ -1,5 +1,2 @@
 #include "../../Flutter/Flutter-Debug.xcconfig"
 #include "Warnings.xcconfig"
-
-OTHER_LDFLAGS=$(inherited) -L$(PROJECT_DIR)/../ghostty/zig-out/lib -lghostty-vt -L$(PROJECT_DIR)/../macos/Libs -lpty
-LD_RUNPATH_SEARCH_PATHS=$(inherited) @executable_path/../Frameworks $(PROJECT_DIR)/../ghostty/zig-out/lib $(PROJECT_DIR)/../macos/Libs

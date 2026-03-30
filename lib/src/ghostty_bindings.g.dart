@@ -6,2924 +6,2132 @@
 // ignore_for_file: unused_import
 import 'dart:ffi' as ffi;
 
-/// Auto-generated bindings for libghostty-vt
-class GhosttyBindings {
-  /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-  _lookup;
-
-  /// The symbols are looked up in [dynamicLibrary].
-  GhosttyBindings(ffi.DynamicLibrary dynamicLibrary)
-    : _lookup = dynamicLibrary.lookup;
-
-  /// The symbols are looked up with [lookup].
-  GhosttyBindings.fromLookup(
-    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
-  ) : _lookup = lookup;
-
-  /// Get the RGB color components.
-  ///
-  /// This function extracts the individual red, green, and blue components
-  /// from a GhosttyColorRgb value. Primarily useful in WebAssembly environments
-  /// where accessing struct fields directly is difficult.
-  ///
-  /// @param color The RGB color value
-  /// @param r Pointer to store the red component (0-255)
-  /// @param g Pointer to store the green component (0-255)
-  /// @param b Pointer to store the blue component (0-255)
-  ///
-  /// @ingroup sgr
-  void ghostty_color_rgb_get(
-    GhosttyColorRgb color,
-    ffi.Pointer<ffi.Uint8> r,
-    ffi.Pointer<ffi.Uint8> g,
-    ffi.Pointer<ffi.Uint8> b,
-  ) {
-    return _ghostty_color_rgb_get(color, r, g, b);
-  }
-
-  late final _ghostty_color_rgb_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            GhosttyColorRgb,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Pointer<ffi.Uint8>,
-          )
-        >
-      >('ghostty_color_rgb_get');
-  late final _ghostty_color_rgb_get = _ghostty_color_rgb_getPtr
-      .asFunction<
-        void Function(
-          GhosttyColorRgb,
-          ffi.Pointer<ffi.Uint8>,
-          ffi.Pointer<ffi.Uint8>,
-          ffi.Pointer<ffi.Uint8>,
-        )
-      >();
-
-  /// Encode a focus event into a terminal escape sequence.
-  ///
-  /// Encodes a focus gained (CSI I) or focus lost (CSI O) report into the
-  /// provided buffer.
-  ///
-  /// If the buffer is too small, the function returns GHOSTTY_OUT_OF_SPACE
-  /// and writes the required buffer size to @p out_written. The caller can
-  /// then retry with a sufficiently sized buffer.
-  ///
-  /// @param event The focus event to encode
-  /// @param buf Output buffer to write the encoded sequence into (may be NULL)
-  /// @param buf_len Size of the output buffer in bytes
-  /// @param[out] out_written On success, the number of bytes written. On
-  /// GHOSTTY_OUT_OF_SPACE, the required buffer size.
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if the buffer
-  /// is too small
-  GhosttyResult ghostty_focus_encode(
-    GhosttyFocusEvent event,
-    ffi.Pointer<ffi.Char> buf,
-    int buf_len,
-    ffi.Pointer<ffi.Size> out_written,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_focus_encode(event.value, buf, buf_len, out_written),
-    );
-  }
-
-  late final _ghostty_focus_encodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Char>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_focus_encode');
-  late final _ghostty_focus_encode = _ghostty_focus_encodePtr
-      .asFunction<
-        int Function(int, ffi.Pointer<ffi.Char>, int, ffi.Pointer<ffi.Size>)
-      >();
-
-  /// Encode a DECRPM (DEC Private Mode Report) response sequence.
-  ///
-  /// Writes a mode report escape sequence into the provided buffer.
-  /// The generated sequence has the form:
-  /// - DEC private mode: CSI ? Ps1 ; Ps2 $ y
-  /// - ANSI mode:        CSI Ps1 ; Ps2 $ y
-  ///
-  /// If the buffer is too small, the function returns GHOSTTY_OUT_OF_SPACE
-  /// and writes the required buffer size to @p out_written. The caller can
-  /// then retry with a sufficiently sized buffer.
-  ///
-  /// @param mode The mode identifying the mode to report on
-  /// @param state The report state for this mode
-  /// @param buf Output buffer to write the encoded sequence into (may be NULL)
-  /// @param buf_len Size of the output buffer in bytes
-  /// @param[out] out_written On success, the number of bytes written. On
-  /// GHOSTTY_OUT_OF_SPACE, the required buffer size.
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if the buffer
-  /// is too small
-  GhosttyResult ghostty_mode_report_encode(
-    DartGhosttyMode mode,
-    GhosttyModeReportState state,
-    ffi.Pointer<ffi.Char> buf,
-    int buf_len,
-    ffi.Pointer<ffi.Size> out_written,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_mode_report_encode(mode, state.value, buf, buf_len, out_written),
-    );
-  }
-
-  late final _ghostty_mode_report_encodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyMode,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Char>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_mode_report_encode');
-  late final _ghostty_mode_report_encode = _ghostty_mode_report_encodePtr
-      .asFunction<
-        int Function(
-          int,
-          int,
-          ffi.Pointer<ffi.Char>,
-          int,
-          ffi.Pointer<ffi.Size>,
-        )
-      >();
-
-  /// Get data from a cell.
-  ///
-  /// Extracts typed data from the given cell based on the specified
-  /// data type. The output pointer must be of the appropriate type for the
-  /// requested data kind. Valid data types and output types are documented
-  /// in the `GhosttyCellData` enum.
-  ///
-  /// @param cell The cell value
-  /// @param data The type of data to extract
-  /// @param out Pointer to store the extracted data (type depends on data parameter)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the
-  /// data type is invalid
-  ///
-  /// @ingroup screen
-  GhosttyResult ghostty_cell_get(
-    DartGhosttyCell cell,
-    GhosttyCellData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_cell_get(cell, data.value, out));
-  }
-
-  late final _ghostty_cell_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyCell, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
-        >
-      >('ghostty_cell_get');
-  late final _ghostty_cell_get = _ghostty_cell_getPtr
-      .asFunction<int Function(int, int, ffi.Pointer<ffi.Void>)>();
-
-  /// Get data from a row.
-  ///
-  /// Extracts typed data from the given row based on the specified
-  /// data type. The output pointer must be of the appropriate type for the
-  /// requested data kind. Valid data types and output types are documented
-  /// in the `GhosttyRowData` enum.
-  ///
-  /// @param row The row value
-  /// @param data The type of data to extract
-  /// @param out Pointer to store the extracted data (type depends on data parameter)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the
-  /// data type is invalid
-  ///
-  /// @ingroup screen
-  GhosttyResult ghostty_row_get(
-    DartGhosttyRow row,
-    GhosttyRowData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_row_get(row, data.value, out));
-  }
-
-  late final _ghostty_row_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyRow, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
-        >
-      >('ghostty_row_get');
-  late final _ghostty_row_get = _ghostty_row_getPtr
-      .asFunction<int Function(int, int, ffi.Pointer<ffi.Void>)>();
-
-  /// Get the default style.
-  ///
-  /// Initializes the style to the default values (no colors, no flags).
-  ///
-  /// @param style Pointer to the style to initialize
-  ///
-  /// @ingroup style
-  void ghostty_style_default(ffi.Pointer<GhosttyStyle> style) {
-    return _ghostty_style_default(style);
-  }
-
-  late final _ghostty_style_defaultPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<GhosttyStyle>)>>(
-        'ghostty_style_default',
-      );
-  late final _ghostty_style_default = _ghostty_style_defaultPtr
-      .asFunction<void Function(ffi.Pointer<GhosttyStyle>)>();
-
-  /// Check if a style is the default style.
-  ///
-  /// Returns true if all colors are unset and all flags are off.
-  ///
-  /// @param style Pointer to the style to check
-  /// @return true if the style is the default style
-  ///
-  /// @ingroup style
-  bool ghostty_style_is_default(ffi.Pointer<GhosttyStyle> style) {
-    return _ghostty_style_is_default(style);
-  }
-
-  late final _ghostty_style_is_defaultPtr =
-      _lookup<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<GhosttyStyle>)>>(
-        'ghostty_style_is_default',
-      );
-  late final _ghostty_style_is_default = _ghostty_style_is_defaultPtr
-      .asFunction<bool Function(ffi.Pointer<GhosttyStyle>)>();
-
-  /// Get the cell from a grid reference.
-  ///
-  /// @param ref Pointer to the grid reference
-  /// @param[out] out_cell On success, set to the cell at the ref's position (may be NULL)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
-  /// node is NULL
-  ///
-  /// @ingroup grid_ref
-  GhosttyResult ghostty_grid_ref_cell(
-    ffi.Pointer<GhosttyGridRef> ref,
-    ffi.Pointer<GhosttyCell> out_cell,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_grid_ref_cell(ref, out_cell));
-  }
-
-  late final _ghostty_grid_ref_cellPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyGridRef>,
-            ffi.Pointer<GhosttyCell>,
-          )
-        >
-      >('ghostty_grid_ref_cell');
-  late final _ghostty_grid_ref_cell = _ghostty_grid_ref_cellPtr
-      .asFunction<
-        int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyCell>)
-      >();
-
-  /// Get the row from a grid reference.
-  ///
-  /// @param ref Pointer to the grid reference
-  /// @param[out] out_row On success, set to the row at the ref's position (may be NULL)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
-  /// node is NULL
-  ///
-  /// @ingroup grid_ref
-  GhosttyResult ghostty_grid_ref_row(
-    ffi.Pointer<GhosttyGridRef> ref,
-    ffi.Pointer<GhosttyRow> out_row,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_grid_ref_row(ref, out_row));
-  }
-
-  late final _ghostty_grid_ref_rowPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyRow>)
-        >
-      >('ghostty_grid_ref_row');
-  late final _ghostty_grid_ref_row = _ghostty_grid_ref_rowPtr
-      .asFunction<
-        int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyRow>)
-      >();
-
-  /// Get the grapheme cluster codepoints for the cell at the grid reference's
-  /// position.
-  ///
-  /// Writes the full grapheme cluster (the cell's primary codepoint followed by
-  /// any combining codepoints) into the provided buffer. If the cell has no text,
-  /// out_len is set to 0 and GHOSTTY_SUCCESS is returned.
-  ///
-  /// If the buffer is too small (or NULL), the function returns
-  /// GHOSTTY_OUT_OF_SPACE and writes the required number of codepoints to
-  /// out_len. The caller can then retry with a sufficiently sized buffer.
-  ///
-  /// @param ref Pointer to the grid reference
-  /// @param buf Output buffer of uint32_t codepoints (may be NULL)
-  /// @param buf_len Number of uint32_t elements in the buffer
-  /// @param[out] out_len On success, the number of codepoints written. On
-  /// GHOSTTY_OUT_OF_SPACE, the required buffer size in codepoints.
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
-  /// node is NULL, GHOSTTY_OUT_OF_SPACE if the buffer is too small
-  ///
-  /// @ingroup grid_ref
-  GhosttyResult ghostty_grid_ref_graphemes(
-    ffi.Pointer<GhosttyGridRef> ref,
-    ffi.Pointer<ffi.Uint32> buf,
-    int buf_len,
-    ffi.Pointer<ffi.Size> out_len,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_grid_ref_graphemes(ref, buf, buf_len, out_len),
-    );
-  }
-
-  late final _ghostty_grid_ref_graphemesPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyGridRef>,
-            ffi.Pointer<ffi.Uint32>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_grid_ref_graphemes');
-  late final _ghostty_grid_ref_graphemes = _ghostty_grid_ref_graphemesPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyGridRef>,
-          ffi.Pointer<ffi.Uint32>,
-          int,
-          ffi.Pointer<ffi.Size>,
-        )
-      >();
-
-  /// Get the style of the cell at the grid reference's position.
-  ///
-  /// @param ref Pointer to the grid reference
-  /// @param[out] out_style On success, set to the cell's style (may be NULL)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
-  /// node is NULL
-  ///
-  /// @ingroup grid_ref
-  GhosttyResult ghostty_grid_ref_style(
-    ffi.Pointer<GhosttyGridRef> ref,
-    ffi.Pointer<GhosttyStyle> out_style,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_grid_ref_style(ref, out_style));
-  }
-
-  late final _ghostty_grid_ref_stylePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyGridRef>,
-            ffi.Pointer<GhosttyStyle>,
-          )
-        >
-      >('ghostty_grid_ref_style');
-  late final _ghostty_grid_ref_style = _ghostty_grid_ref_stylePtr
-      .asFunction<
-        int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyStyle>)
-      >();
-
-  /// Create a new terminal instance.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param terminal Pointer to store the created terminal handle
-  /// @param options Terminal initialization options
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup terminal
-  GhosttyResult ghostty_terminal_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyTerminal> terminal,
-    GhosttyTerminalOptions options,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_terminal_new(allocator, terminal, options),
-    );
-  }
-
-  late final _ghostty_terminal_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyTerminal>,
-            GhosttyTerminalOptions,
-          )
-        >
-      >('ghostty_terminal_new');
-  late final _ghostty_terminal_new = _ghostty_terminal_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyTerminal>,
-          GhosttyTerminalOptions,
-        )
-      >();
-
-  /// Free a terminal instance.
-  ///
-  /// Releases all resources associated with the terminal. After this call,
-  /// the terminal handle becomes invalid and must not be used.
-  ///
-  /// @param terminal The terminal handle to free (may be NULL)
-  ///
-  /// @ingroup terminal
-  void ghostty_terminal_free(GhosttyTerminal terminal) {
-    return _ghostty_terminal_free(terminal);
-  }
-
-  late final _ghostty_terminal_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyTerminal)>>(
-        'ghostty_terminal_free',
-      );
-  late final _ghostty_terminal_free = _ghostty_terminal_freePtr
-      .asFunction<void Function(GhosttyTerminal)>();
-
-  /// Perform a full reset of the terminal (RIS).
-  ///
-  /// Resets all terminal state back to its initial configuration, including
-  /// modes, scrollback, scrolling region, and screen contents. The terminal
-  /// dimensions are preserved.
-  ///
-  /// @param terminal The terminal handle (may be NULL, in which case this is a no-op)
-  ///
-  /// @ingroup terminal
-  void ghostty_terminal_reset(GhosttyTerminal terminal) {
-    return _ghostty_terminal_reset(terminal);
-  }
-
-  late final _ghostty_terminal_resetPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyTerminal)>>(
-        'ghostty_terminal_reset',
-      );
-  late final _ghostty_terminal_reset = _ghostty_terminal_resetPtr
-      .asFunction<void Function(GhosttyTerminal)>();
-
-  /// Resize the terminal to the given dimensions.
-  ///
-  /// Changes the number of columns and rows in the terminal. The primary
-  /// screen will reflow content if wraparound mode is enabled; the alternate
-  /// screen does not reflow. If the dimensions are unchanged, this is a no-op.
-  ///
-  /// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param cols New width in cells (must be greater than zero)
-  /// @param rows New height in cells (must be greater than zero)
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup terminal
-  GhosttyResult ghostty_terminal_resize(
-    GhosttyTerminal terminal,
-    int cols,
-    int rows,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_terminal_resize(terminal, cols, rows),
-    );
-  }
-
-  late final _ghostty_terminal_resizePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyTerminal, ffi.Uint16, ffi.Uint16)
-        >
-      >('ghostty_terminal_resize');
-  late final _ghostty_terminal_resize = _ghostty_terminal_resizePtr
-      .asFunction<int Function(GhosttyTerminal, int, int)>();
-
-  /// Write VT-encoded data to the terminal for processing.
-  ///
-  /// Feeds raw bytes through the terminal's VT stream parser, updating
-  /// terminal state accordingly. Only read-only sequences are processed;
-  /// sequences that require output (queries) are ignored.
-  ///
-  /// In the future, a callback-based API will be added to allow handling
-  /// of output or side effect sequences.
-  ///
-  /// This never fails. Any erroneous input or errors in processing the
-  /// input are logged internally but do not cause this function to fail
-  /// because this input is assumed to be untrusted and from an external
-  /// source; so the primary goal is to keep the terminal state consistent and
-  /// not allow malformed input to corrupt or crash.
-  ///
-  /// @param terminal The terminal handle
-  /// @param data Pointer to the data to write
-  /// @param len Length of the data in bytes
-  ///
-  /// @ingroup terminal
-  void ghostty_terminal_vt_write(
-    GhosttyTerminal terminal,
-    ffi.Pointer<ffi.Uint8> data,
-    int len,
-  ) {
-    return _ghostty_terminal_vt_write(terminal, data, len);
-  }
-
-  late final _ghostty_terminal_vt_writePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyTerminal, ffi.Pointer<ffi.Uint8>, ffi.Size)
-        >
-      >('ghostty_terminal_vt_write');
-  late final _ghostty_terminal_vt_write = _ghostty_terminal_vt_writePtr
-      .asFunction<
-        void Function(GhosttyTerminal, ffi.Pointer<ffi.Uint8>, int)
-      >();
-
-  /// Scroll the terminal viewport.
-  ///
-  /// Scrolls the terminal's viewport according to the given behavior.
-  /// When using GHOSTTY_SCROLL_VIEWPORT_DELTA, set the delta field in
-  /// the value union to specify the number of rows to scroll (negative
-  /// for up, positive for down). For other behaviors, the value is ignored.
-  ///
-  /// @param terminal The terminal handle (may be NULL, in which case this is a no-op)
-  /// @param behavior The scroll behavior as a tagged union
-  ///
-  /// @ingroup terminal
-  void ghostty_terminal_scroll_viewport(
-    GhosttyTerminal terminal,
-    GhosttyTerminalScrollViewport behavior,
-  ) {
-    return _ghostty_terminal_scroll_viewport(terminal, behavior);
-  }
-
-  late final _ghostty_terminal_scroll_viewportPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyTerminal, GhosttyTerminalScrollViewport)
-        >
-      >('ghostty_terminal_scroll_viewport');
-  late final _ghostty_terminal_scroll_viewport =
-      _ghostty_terminal_scroll_viewportPtr
-          .asFunction<
-            void Function(GhosttyTerminal, GhosttyTerminalScrollViewport)
-          >();
-
-  /// Get the current value of a terminal mode.
-  ///
-  /// Returns the value of the mode identified by the given mode.
-  ///
-  /// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param mode The mode identifying the mode to query
-  /// @param[out] out_value On success, set to true if the mode is set, false
-  /// if it is reset
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
-  /// is NULL or the mode does not correspond to a known mode
-  ///
-  /// @ingroup terminal
-  GhosttyResult ghostty_terminal_mode_get(
-    GhosttyTerminal terminal,
-    DartGhosttyMode mode,
-    ffi.Pointer<ffi.Bool> out_value,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_terminal_mode_get(terminal, mode, out_value),
-    );
-  }
-
-  late final _ghostty_terminal_mode_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyTerminal, GhosttyMode, ffi.Pointer<ffi.Bool>)
-        >
-      >('ghostty_terminal_mode_get');
-  late final _ghostty_terminal_mode_get = _ghostty_terminal_mode_getPtr
-      .asFunction<int Function(GhosttyTerminal, int, ffi.Pointer<ffi.Bool>)>();
-
-  /// Set the value of a terminal mode.
-  ///
-  /// Sets the mode identified by the given mode to the specified value.
-  ///
-  /// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param mode The mode identifying the mode to set
-  /// @param value true to set the mode, false to reset it
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
-  /// is NULL or the mode does not correspond to a known mode
-  ///
-  /// @ingroup terminal
-  GhosttyResult ghostty_terminal_mode_set(
-    GhosttyTerminal terminal,
-    DartGhosttyMode mode,
-    bool value,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_terminal_mode_set(terminal, mode, value),
-    );
-  }
-
-  late final _ghostty_terminal_mode_setPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyTerminal, GhosttyMode, ffi.Bool)
-        >
-      >('ghostty_terminal_mode_set');
-  late final _ghostty_terminal_mode_set = _ghostty_terminal_mode_setPtr
-      .asFunction<int Function(GhosttyTerminal, int, bool)>();
-
-  /// Get data from a terminal instance.
-  ///
-  /// Extracts typed data from the given terminal based on the specified
-  /// data type. The output pointer must be of the appropriate type for the
-  /// requested data kind. Valid data types and output types are documented
-  /// in the `GhosttyTerminalData` enum.
-  ///
-  /// @param terminal The terminal handle (may be NULL)
-  /// @param data The type of data to extract
-  /// @param out Pointer to store the extracted data (type depends on data parameter)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
-  /// is NULL or the data type is invalid
-  ///
-  /// @ingroup terminal
-  GhosttyResult ghostty_terminal_get(
-    GhosttyTerminal terminal,
-    GhosttyTerminalData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_terminal_get(terminal, data.value, out),
-    );
-  }
-
-  late final _ghostty_terminal_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyTerminal,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_terminal_get');
-  late final _ghostty_terminal_get = _ghostty_terminal_getPtr
-      .asFunction<int Function(GhosttyTerminal, int, ffi.Pointer<ffi.Void>)>();
-
-  /// Resolve a point in the terminal grid to a grid reference.
-  ///
-  /// Resolves the given point (which can be in active, viewport, screen,
-  /// or history coordinates) to a grid reference for that location. Use
-  /// ghostty_grid_ref_cell() and ghostty_grid_ref_row() to extract the cell
-  /// and row.
-  ///
-  /// Lookups using the `active` and `viewport` tags are fast. The `screen`
-  /// and `history` tags may require traversing the full scrollback page list
-  /// to resolve the y coordinate, so they can be expensive for large
-  /// scrollback buffers.
-  ///
-  /// This function isn't meant to be used as the core of render loop. It
-  /// isn't built to sustain the framerates needed for rendering large screens.
-  /// Use the render state API for that. This API is instead meant for less
-  /// strictly performance-sensitive use cases.
-  ///
-  /// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param point The point specifying which cell to look up
-  /// @param[out] out_ref On success, set to the grid reference at the given point (may be NULL)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
-  /// is NULL or the point is out of bounds
-  ///
-  /// @ingroup terminal
-  GhosttyResult ghostty_terminal_grid_ref(
-    GhosttyTerminal terminal,
-    GhosttyPoint point,
-    ffi.Pointer<GhosttyGridRef> out_ref,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_terminal_grid_ref(terminal, point, out_ref),
-    );
-  }
-
-  late final _ghostty_terminal_grid_refPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyTerminal,
-            GhosttyPoint,
-            ffi.Pointer<GhosttyGridRef>,
-          )
-        >
-      >('ghostty_terminal_grid_ref');
-  late final _ghostty_terminal_grid_ref = _ghostty_terminal_grid_refPtr
-      .asFunction<
-        int Function(GhosttyTerminal, GhosttyPoint, ffi.Pointer<GhosttyGridRef>)
-      >();
-
-  /// Create a formatter for a terminal's active screen.
-  ///
-  /// The terminal must outlive the formatter. The formatter stores a borrowed
-  /// reference to the terminal and reads its current state on each format call.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param formatter Pointer to store the created formatter handle
-  /// @param terminal The terminal to format (must not be NULL)
-  /// @param options Formatting options
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup formatter
-  GhosttyResult ghostty_formatter_terminal_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyFormatter> formatter,
-    GhosttyTerminal terminal,
-    GhosttyFormatterTerminalOptions options,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_formatter_terminal_new(allocator, formatter, terminal, options),
-    );
-  }
-
-  late final _ghostty_formatter_terminal_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyFormatter>,
-            GhosttyTerminal,
-            GhosttyFormatterTerminalOptions,
-          )
-        >
-      >('ghostty_formatter_terminal_new');
-  late final _ghostty_formatter_terminal_new =
-      _ghostty_formatter_terminal_newPtr
-          .asFunction<
-            int Function(
-              ffi.Pointer<GhosttyAllocator>,
-              ffi.Pointer<GhosttyFormatter>,
-              GhosttyTerminal,
-              GhosttyFormatterTerminalOptions,
-            )
-          >();
-
-  /// Run the formatter and produce output into the caller-provided buffer.
-  ///
-  /// Each call formats the current terminal state. Pass NULL for buf to
-  /// query the required buffer size without writing any output; in that case
-  /// out_written receives the required size and the return value is
-  /// GHOSTTY_OUT_OF_SPACE.
-  ///
-  /// If the buffer is too small, returns GHOSTTY_OUT_OF_SPACE and sets
-  /// out_written to the required size. The caller can then retry with a
-  /// larger buffer.
-  ///
-  /// @param formatter The formatter handle (must not be NULL)
-  /// @param buf Pointer to the output buffer, or NULL to query size
-  /// @param buf_len Length of the output buffer in bytes
-  /// @param out_written Pointer to receive the number of bytes written,
-  /// or the required size on failure
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup formatter
-  GhosttyResult ghostty_formatter_format_buf(
-    GhosttyFormatter formatter,
-    ffi.Pointer<ffi.Uint8> buf,
-    int buf_len,
-    ffi.Pointer<ffi.Size> out_written,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_formatter_format_buf(formatter, buf, buf_len, out_written),
-    );
-  }
-
-  late final _ghostty_formatter_format_bufPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyFormatter,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_formatter_format_buf');
-  late final _ghostty_formatter_format_buf = _ghostty_formatter_format_bufPtr
-      .asFunction<
-        int Function(
-          GhosttyFormatter,
-          ffi.Pointer<ffi.Uint8>,
-          int,
-          ffi.Pointer<ffi.Size>,
-        )
-      >();
-
-  /// Run the formatter and return an allocated buffer with the output.
-  ///
-  /// Each call formats the current terminal state. The buffer is allocated
-  /// using the provided allocator (or the default allocator if NULL).
-  /// The caller is responsible for freeing the returned buffer. When using
-  /// the default allocator (NULL), the buffer can be freed with `free()`.
-  /// When using a custom allocator, the buffer must be freed using the
-  /// same allocator.
-  ///
-  /// @param formatter The formatter handle (must not be NULL)
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param out_ptr Pointer to receive the allocated buffer
-  /// @param out_len Pointer to receive the length of the output in bytes
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
-  /// failure
-  ///
-  /// @ingroup formatter
-  GhosttyResult ghostty_formatter_format_alloc(
-    GhosttyFormatter formatter,
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<ffi.Pointer<ffi.Uint8>> out_ptr,
-    ffi.Pointer<ffi.Size> out_len,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_formatter_format_alloc(formatter, allocator, out_ptr, out_len),
-    );
-  }
-
-  late final _ghostty_formatter_format_allocPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyFormatter,
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<ffi.Pointer<ffi.Uint8>>,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_formatter_format_alloc');
-  late final _ghostty_formatter_format_alloc =
-      _ghostty_formatter_format_allocPtr
-          .asFunction<
-            int Function(
-              GhosttyFormatter,
-              ffi.Pointer<GhosttyAllocator>,
-              ffi.Pointer<ffi.Pointer<ffi.Uint8>>,
-              ffi.Pointer<ffi.Size>,
-            )
-          >();
-
-  /// Free a formatter instance.
-  ///
-  /// Releases all resources associated with the formatter. After this call,
-  /// the formatter handle becomes invalid.
-  ///
-  /// @param formatter The formatter handle to free (may be NULL)
-  ///
-  /// @ingroup formatter
-  void ghostty_formatter_free(GhosttyFormatter formatter) {
-    return _ghostty_formatter_free(formatter);
-  }
-
-  late final _ghostty_formatter_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyFormatter)>>(
-        'ghostty_formatter_free',
-      );
-  late final _ghostty_formatter_free = _ghostty_formatter_freePtr
-      .asFunction<void Function(GhosttyFormatter)>();
-
-  /// Create a new render state instance.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param state Pointer to store the created render state handle
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
-  /// failure
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyRenderState> state,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_render_state_new(allocator, state));
-  }
-
-  late final _ghostty_render_state_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyRenderState>,
-          )
-        >
-      >('ghostty_render_state_new');
-  late final _ghostty_render_state_new = _ghostty_render_state_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyRenderState>,
-        )
-      >();
-
-  /// Free a render state instance.
-  ///
-  /// Releases all resources associated with the render state. After this call,
-  /// the render state handle becomes invalid.
-  ///
-  /// @param state The render state handle to free (may be NULL)
-  ///
-  /// @ingroup render
-  void ghostty_render_state_free(GhosttyRenderState state) {
-    return _ghostty_render_state_free(state);
-  }
-
-  late final _ghostty_render_state_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyRenderState)>>(
-        'ghostty_render_state_free',
-      );
-  late final _ghostty_render_state_free = _ghostty_render_state_freePtr
-      .asFunction<void Function(GhosttyRenderState)>();
-
-  /// Update a render state instance from a terminal.
-  ///
-  /// This consumes terminal/screen dirty state in the same way as the internal
-  /// render state update path.
-  ///
-  /// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param terminal The terminal handle to read from (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` or
-  /// `terminal` is NULL, GHOSTTY_OUT_OF_MEMORY if updating the state requires
-  /// allocation and that allocation fails
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_update(
-    GhosttyRenderState state,
-    GhosttyTerminal terminal,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_update(state, terminal),
-    );
-  }
-
-  late final _ghostty_render_state_updatePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyRenderState, GhosttyTerminal)
-        >
-      >('ghostty_render_state_update');
-  late final _ghostty_render_state_update = _ghostty_render_state_updatePtr
-      .asFunction<int Function(GhosttyRenderState, GhosttyTerminal)>();
-
-  /// Get a value from a render state.
-  ///
-  /// The `out` pointer must point to a value of the type corresponding to the
-  /// requested data kind (see GhosttyRenderStateData).
-  ///
-  /// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param data The data kind to query
-  /// @param[out] out Pointer to receive the queried value
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` is
-  /// NULL or `data` is not a recognized enum value
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_get(
-    GhosttyRenderState state,
-    GhosttyRenderStateData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_get(state, data.value, out),
-    );
-  }
-
-  late final _ghostty_render_state_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyRenderState,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_render_state_get');
-  late final _ghostty_render_state_get = _ghostty_render_state_getPtr
-      .asFunction<
-        int Function(GhosttyRenderState, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Set an option on a render state.
-  ///
-  /// The `value` pointer must point to a value of the type corresponding to the
-  /// requested option kind (see GhosttyRenderStateOption).
-  ///
-  /// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param option The option to set
-  /// @param[in] value Pointer to the value to set (NULL returns
-  /// GHOSTTY_INVALID_VALUE)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` or
-  /// `value` is NULL
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_set(
-    GhosttyRenderState state,
-    GhosttyRenderStateOption option,
-    ffi.Pointer<ffi.Void> value,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_set(state, option.value, value),
-    );
-  }
-
-  late final _ghostty_render_state_setPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyRenderState,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_render_state_set');
-  late final _ghostty_render_state_set = _ghostty_render_state_setPtr
-      .asFunction<
-        int Function(GhosttyRenderState, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Get the current color information from a render state.
-  ///
-  /// This writes as many fields as fit in the caller-provided sized struct.
-  /// `out_colors->size` must be set by the caller (typically via
-  /// GHOSTTY_INIT_SIZED(GhosttyRenderStateColors)).
-  ///
-  /// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param[out] out_colors Sized output struct to receive render-state colors
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` or
-  /// `out_colors` is NULL, or if `out_colors->size` is smaller than
-  /// `sizeof(size_t)`
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_colors_get(
-    GhosttyRenderState state,
-    ffi.Pointer<GhosttyRenderStateColors> out_colors,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_colors_get(state, out_colors),
-    );
-  }
-
-  late final _ghostty_render_state_colors_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyRenderState,
-            ffi.Pointer<GhosttyRenderStateColors>,
-          )
-        >
-      >('ghostty_render_state_colors_get');
-  late final _ghostty_render_state_colors_get =
-      _ghostty_render_state_colors_getPtr
-          .asFunction<
-            int Function(
-              GhosttyRenderState,
-              ffi.Pointer<GhosttyRenderStateColors>,
-            )
-          >();
-
-  /// Create a new row iterator instance.
-  ///
-  /// All fields except the allocator are left undefined until populated
-  /// via ghostty_render_state_get() with
-  /// GHOSTTY_RENDER_STATE_DATA_ROW_ITERATOR.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param[out] out_iterator On success, receives the created iterator handle
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
-  /// failure
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_row_iterator_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyRenderStateRowIterator> out_iterator,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_row_iterator_new(allocator, out_iterator),
-    );
-  }
-
-  late final _ghostty_render_state_row_iterator_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyRenderStateRowIterator>,
-          )
-        >
-      >('ghostty_render_state_row_iterator_new');
-  late final _ghostty_render_state_row_iterator_new =
-      _ghostty_render_state_row_iterator_newPtr
-          .asFunction<
-            int Function(
-              ffi.Pointer<GhosttyAllocator>,
-              ffi.Pointer<GhosttyRenderStateRowIterator>,
-            )
-          >();
-
-  /// Free a render-state row iterator.
-  ///
-  /// @param iterator The iterator handle to free (may be NULL)
-  ///
-  /// @ingroup render
-  void ghostty_render_state_row_iterator_free(
-    GhosttyRenderStateRowIterator iterator,
-  ) {
-    return _ghostty_render_state_row_iterator_free(iterator);
-  }
-
-  late final _ghostty_render_state_row_iterator_freePtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyRenderStateRowIterator)>
-      >('ghostty_render_state_row_iterator_free');
-  late final _ghostty_render_state_row_iterator_free =
-      _ghostty_render_state_row_iterator_freePtr
-          .asFunction<void Function(GhosttyRenderStateRowIterator)>();
-
-  /// Move a render-state row iterator to the next row.
-  ///
-  /// Returns true if the iterator moved successfully and row data is
-  /// available to read at the new position.
-  ///
-  /// @param iterator The iterator handle to advance (may be NULL)
-  /// @return true if advanced to the next row, false if `iterator` is
-  /// NULL or if the iterator has reached the end
-  ///
-  /// @ingroup render
-  bool ghostty_render_state_row_iterator_next(
-    GhosttyRenderStateRowIterator iterator,
-  ) {
-    return _ghostty_render_state_row_iterator_next(iterator);
-  }
-
-  late final _ghostty_render_state_row_iterator_nextPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Bool Function(GhosttyRenderStateRowIterator)>
-      >('ghostty_render_state_row_iterator_next');
-  late final _ghostty_render_state_row_iterator_next =
-      _ghostty_render_state_row_iterator_nextPtr
-          .asFunction<bool Function(GhosttyRenderStateRowIterator)>();
-
-  /// Get a value from the current row in a render-state row iterator.
-  ///
-  /// The `out` pointer must point to a value of the type corresponding to the
-  /// requested data kind (see GhosttyRenderStateRowData).
-  /// Call ghostty_render_state_row_iterator_next() at least once before
-  /// calling this function.
-  ///
-  /// @param iterator The iterator handle to query (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param data The data kind to query
-  /// @param[out] out Pointer to receive the queried value
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if
-  /// `iterator` is NULL or the iterator is not positioned on a row
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_row_get(
-    GhosttyRenderStateRowIterator iterator,
-    GhosttyRenderStateRowData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_row_get(iterator, data.value, out),
-    );
-  }
-
-  late final _ghostty_render_state_row_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyRenderStateRowIterator,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_render_state_row_get');
-  late final _ghostty_render_state_row_get = _ghostty_render_state_row_getPtr
-      .asFunction<
-        int Function(GhosttyRenderStateRowIterator, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Set an option on the current row in a render-state row iterator.
-  ///
-  /// The `value` pointer must point to a value of the type corresponding to the
-  /// requested option kind (see GhosttyRenderStateRowOption).
-  /// Call ghostty_render_state_row_iterator_next() at least once before
-  /// calling this function.
-  ///
-  /// @param iterator The iterator handle to update (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param option The option to set
-  /// @param[in] value Pointer to the value to set (NULL returns
-  /// GHOSTTY_INVALID_VALUE)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if
-  /// `iterator` is NULL or the iterator is not positioned on a row
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_row_set(
-    GhosttyRenderStateRowIterator iterator,
-    GhosttyRenderStateRowOption option,
-    ffi.Pointer<ffi.Void> value,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_row_set(iterator, option.value, value),
-    );
-  }
-
-  late final _ghostty_render_state_row_setPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyRenderStateRowIterator,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_render_state_row_set');
-  late final _ghostty_render_state_row_set = _ghostty_render_state_row_setPtr
-      .asFunction<
-        int Function(GhosttyRenderStateRowIterator, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Create a new row cells instance.
-  ///
-  /// All fields except the allocator are left undefined until populated
-  /// via ghostty_render_state_row_get() with
-  /// GHOSTTY_RENDER_STATE_ROW_DATA_CELLS.
-  ///
-  /// You can reuse this value repeatedly with ghostty_render_state_row_get() to
-  /// avoid allocating a new cells container for every row.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param[out] out_cells On success, receives the created row cells handle
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
-  /// failure
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_row_cells_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyRenderStateRowCells> out_cells,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_row_cells_new(allocator, out_cells),
-    );
-  }
-
-  late final _ghostty_render_state_row_cells_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyRenderStateRowCells>,
-          )
-        >
-      >('ghostty_render_state_row_cells_new');
-  late final _ghostty_render_state_row_cells_new =
-      _ghostty_render_state_row_cells_newPtr
-          .asFunction<
-            int Function(
-              ffi.Pointer<GhosttyAllocator>,
-              ffi.Pointer<GhosttyRenderStateRowCells>,
-            )
-          >();
-
-  /// Move a render-state row cells iterator to the next cell.
-  ///
-  /// Returns true if the iterator moved successfully and cell data is
-  /// available to read at the new position.
-  ///
-  /// @param cells The row cells handle to advance (may be NULL)
-  /// @return true if advanced to the next cell, false if `cells` is
-  /// NULL or if the iterator has reached the end
-  ///
-  /// @ingroup render
-  bool ghostty_render_state_row_cells_next(GhosttyRenderStateRowCells cells) {
-    return _ghostty_render_state_row_cells_next(cells);
-  }
-
-  late final _ghostty_render_state_row_cells_nextPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Bool Function(GhosttyRenderStateRowCells)>
-      >('ghostty_render_state_row_cells_next');
-  late final _ghostty_render_state_row_cells_next =
-      _ghostty_render_state_row_cells_nextPtr
-          .asFunction<bool Function(GhosttyRenderStateRowCells)>();
-
-  /// Move a render-state row cells iterator to a specific column.
-  ///
-  /// Positions the iterator at the given x (column) index so that
-  /// subsequent reads return data for that cell.
-  ///
-  /// @param cells The row cells handle to reposition (NULL returns
-  /// GHOSTTY_INVALID_VALUE)
-  /// @param x The zero-based column index to select
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `cells`
-  /// is NULL or `x` is out of range
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_row_cells_select(
-    GhosttyRenderStateRowCells cells,
-    int x,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_row_cells_select(cells, x),
-    );
-  }
-
-  late final _ghostty_render_state_row_cells_selectPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(GhosttyRenderStateRowCells, ffi.Uint16)
-        >
-      >('ghostty_render_state_row_cells_select');
-  late final _ghostty_render_state_row_cells_select =
-      _ghostty_render_state_row_cells_selectPtr
-          .asFunction<int Function(GhosttyRenderStateRowCells, int)>();
-
-  /// Get a value from the current cell in a render-state row cells iterator.
-  ///
-  /// The `out` pointer must point to a value of the type corresponding to the
-  /// requested data kind (see GhosttyRenderStateRowCellsData).
-  /// Call ghostty_render_state_row_cells_next() or
-  /// ghostty_render_state_row_cells_select() at least once before
-  /// calling this function.
-  ///
-  /// @param cells The row cells handle to query (NULL returns GHOSTTY_INVALID_VALUE)
-  /// @param data The data kind to query
-  /// @param[out] out Pointer to receive the queried value
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if
-  /// `cells` is NULL or the iterator is not positioned on a cell
-  ///
-  /// @ingroup render
-  GhosttyResult ghostty_render_state_row_cells_get(
-    GhosttyRenderStateRowCells cells,
-    GhosttyRenderStateRowCellsData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_render_state_row_cells_get(cells, data.value, out),
-    );
-  }
-
-  late final _ghostty_render_state_row_cells_getPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyRenderStateRowCells,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_render_state_row_cells_get');
-  late final _ghostty_render_state_row_cells_get =
-      _ghostty_render_state_row_cells_getPtr
-          .asFunction<
-            int Function(GhosttyRenderStateRowCells, int, ffi.Pointer<ffi.Void>)
-          >();
-
-  /// Free a row cells instance.
-  ///
-  /// @param cells The row cells handle to free (may be NULL)
-  ///
-  /// @ingroup render
-  void ghostty_render_state_row_cells_free(GhosttyRenderStateRowCells cells) {
-    return _ghostty_render_state_row_cells_free(cells);
-  }
-
-  late final _ghostty_render_state_row_cells_freePtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyRenderStateRowCells)>
-      >('ghostty_render_state_row_cells_free');
-  late final _ghostty_render_state_row_cells_free =
-      _ghostty_render_state_row_cells_freePtr
-          .asFunction<void Function(GhosttyRenderStateRowCells)>();
-
-  /// Create a new OSC parser instance.
-  ///
-  /// Creates a new OSC (Operating System Command) parser using the provided
-  /// allocator. The parser must be freed using ghostty_vt_osc_free() when
-  /// no longer needed.
-  ///
-  /// @param allocator Pointer to the allocator to use for memory management, or NULL to use the default allocator
-  /// @param parser Pointer to store the created parser handle
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup osc
-  GhosttyResult ghostty_osc_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyOscParser> parser,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_osc_new(allocator, parser));
-  }
-
-  late final _ghostty_osc_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyOscParser>,
-          )
-        >
-      >('ghostty_osc_new');
-  late final _ghostty_osc_new = _ghostty_osc_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyOscParser>,
-        )
-      >();
-
-  /// Free an OSC parser instance.
-  ///
-  /// Releases all resources associated with the OSC parser. After this call,
-  /// the parser handle becomes invalid and must not be used.
-  ///
-  /// @param parser The parser handle to free (may be NULL)
-  ///
-  /// @ingroup osc
-  void ghostty_osc_free(GhosttyOscParser parser) {
-    return _ghostty_osc_free(parser);
-  }
-
-  late final _ghostty_osc_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyOscParser)>>(
-        'ghostty_osc_free',
-      );
-  late final _ghostty_osc_free = _ghostty_osc_freePtr
-      .asFunction<void Function(GhosttyOscParser)>();
-
-  /// Reset an OSC parser instance to its initial state.
-  ///
-  /// Resets the parser state, clearing any partially parsed OSC sequences
-  /// and returning the parser to its initial state. This is useful for
-  /// reusing a parser instance or recovering from parse errors.
-  ///
-  /// @param parser The parser handle to reset, must not be null.
-  ///
-  /// @ingroup osc
-  void ghostty_osc_reset(GhosttyOscParser parser) {
-    return _ghostty_osc_reset(parser);
-  }
-
-  late final _ghostty_osc_resetPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyOscParser)>>(
-        'ghostty_osc_reset',
-      );
-  late final _ghostty_osc_reset = _ghostty_osc_resetPtr
-      .asFunction<void Function(GhosttyOscParser)>();
-
-  /// Parse the next byte in an OSC sequence.
-  ///
-  /// Processes a single byte as part of an OSC sequence. The parser maintains
-  /// internal state to track the progress through the sequence. Call this
-  /// function for each byte in the sequence data.
-  ///
-  /// When finished pumping the parser with bytes, call ghostty_osc_end
-  /// to get the final result.
-  ///
-  /// @param parser The parser handle, must not be null.
-  /// @param byte The next byte to parse
-  ///
-  /// @ingroup osc
-  void ghostty_osc_next(GhosttyOscParser parser, int byte) {
-    return _ghostty_osc_next(parser, byte);
-  }
-
-  late final _ghostty_osc_nextPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyOscParser, ffi.Uint8)>
-      >('ghostty_osc_next');
-  late final _ghostty_osc_next = _ghostty_osc_nextPtr
-      .asFunction<void Function(GhosttyOscParser, int)>();
-
-  /// Finalize OSC parsing and retrieve the parsed command.
-  ///
-  /// Call this function after feeding all bytes of an OSC sequence to the parser
-  /// using ghostty_osc_next() with the exception of the terminating character
-  /// (ESC or ST). This function finalizes the parsing process and returns the
-  /// parsed OSC command.
-  ///
-  /// The return value is never NULL. Invalid commands will return a command
-  /// with type GHOSTTY_OSC_COMMAND_INVALID.
-  ///
-  /// The terminator parameter specifies the byte that terminated the OSC sequence
-  /// (typically 0x07 for BEL or 0x5C for ST after ESC). This information is
-  /// preserved in the parsed command so that responses can use the same terminator
-  /// format for better compatibility with the calling program. For commands that
-  /// do not require a response, this parameter is ignored and the resulting
-  /// command will not retain the terminator information.
-  ///
-  /// The returned command handle is valid until the next call to any
-  /// `ghostty_osc_*` function with the same parser instance with the exception
-  /// of command introspection functions such as `ghostty_osc_command_type`.
-  ///
-  /// @param parser The parser handle, must not be null.
-  /// @param terminator The terminating byte of the OSC sequence (0x07 for BEL, 0x5C for ST)
-  /// @return Handle to the parsed OSC command
-  ///
-  /// @ingroup osc
-  GhosttyOscCommand ghostty_osc_end(GhosttyOscParser parser, int terminator) {
-    return _ghostty_osc_end(parser, terminator);
-  }
-
-  late final _ghostty_osc_endPtr =
-      _lookup<
-        ffi.NativeFunction<
-          GhosttyOscCommand Function(GhosttyOscParser, ffi.Uint8)
-        >
-      >('ghostty_osc_end');
-  late final _ghostty_osc_end = _ghostty_osc_endPtr
-      .asFunction<GhosttyOscCommand Function(GhosttyOscParser, int)>();
-
-  /// Get the type of an OSC command.
-  ///
-  /// Returns the type identifier for the given OSC command. This can be used
-  /// to determine what kind of command was parsed and what data might be
-  /// available from it.
-  ///
-  /// @param command The OSC command handle to query (may be NULL)
-  /// @return The command type, or GHOSTTY_OSC_COMMAND_INVALID if command is NULL
-  ///
-  /// @ingroup osc
-  GhosttyOscCommandType ghostty_osc_command_type(GhosttyOscCommand command) {
-    return GhosttyOscCommandType.fromValue(_ghostty_osc_command_type(command));
-  }
-
-  late final _ghostty_osc_command_typePtr =
-      _lookup<ffi.NativeFunction<ffi.UnsignedInt Function(GhosttyOscCommand)>>(
-        'ghostty_osc_command_type',
-      );
-  late final _ghostty_osc_command_type = _ghostty_osc_command_typePtr
-      .asFunction<int Function(GhosttyOscCommand)>();
-
-  /// Extract data from an OSC command.
-  ///
-  /// Extracts typed data from the given OSC command based on the specified
-  /// data type. The output pointer must be of the appropriate type for the
-  /// requested data kind. Valid command types, output types, and memory
-  /// safety information are documented in the `GhosttyOscCommandData` enum.
-  ///
-  /// @param command The OSC command handle to query (may be NULL)
-  /// @param data The type of data to extract
-  /// @param out Pointer to store the extracted data (type depends on data parameter)
-  /// @return true if data extraction was successful, false otherwise
-  ///
-  /// @ingroup osc
-  bool ghostty_osc_command_data(
-    GhosttyOscCommand command,
-    GhosttyOscCommandData data,
-    ffi.Pointer<ffi.Void> out,
-  ) {
-    return _ghostty_osc_command_data(command, data.value, out);
-  }
-
-  late final _ghostty_osc_command_dataPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Bool Function(
-            GhosttyOscCommand,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_osc_command_data');
-  late final _ghostty_osc_command_data = _ghostty_osc_command_dataPtr
-      .asFunction<
-        bool Function(GhosttyOscCommand, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Create a new SGR parser instance.
-  ///
-  /// Creates a new SGR (Select Graphic Rendition) parser using the provided
-  /// allocator. The parser must be freed using ghostty_sgr_free() when
-  /// no longer needed.
-  ///
-  /// @param allocator Pointer to the allocator to use for memory management, or
-  /// NULL to use the default allocator
-  /// @param parser Pointer to store the created parser handle
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup sgr
-  GhosttyResult ghostty_sgr_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttySgrParser> parser,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_sgr_new(allocator, parser));
-  }
-
-  late final _ghostty_sgr_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttySgrParser>,
-          )
-        >
-      >('ghostty_sgr_new');
-  late final _ghostty_sgr_new = _ghostty_sgr_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttySgrParser>,
-        )
-      >();
-
-  /// Free an SGR parser instance.
-  ///
-  /// Releases all resources associated with the SGR parser. After this call,
-  /// the parser handle becomes invalid and must not be used. This includes
-  /// any attributes previously returned by ghostty_sgr_next().
-  ///
-  /// @param parser The parser handle to free (may be NULL)
-  ///
-  /// @ingroup sgr
-  void ghostty_sgr_free(GhosttySgrParser parser) {
-    return _ghostty_sgr_free(parser);
-  }
-
-  late final _ghostty_sgr_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttySgrParser)>>(
-        'ghostty_sgr_free',
-      );
-  late final _ghostty_sgr_free = _ghostty_sgr_freePtr
-      .asFunction<void Function(GhosttySgrParser)>();
-
-  /// Reset an SGR parser instance to the beginning of the parameter list.
-  ///
-  /// Resets the parser's iteration state without clearing the parameters.
-  /// After calling this, ghostty_sgr_next() will start from the beginning
-  /// of the parameter list again.
-  ///
-  /// @param parser The parser handle to reset, must not be NULL
-  ///
-  /// @ingroup sgr
-  void ghostty_sgr_reset(GhosttySgrParser parser) {
-    return _ghostty_sgr_reset(parser);
-  }
-
-  late final _ghostty_sgr_resetPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttySgrParser)>>(
-        'ghostty_sgr_reset',
-      );
-  late final _ghostty_sgr_reset = _ghostty_sgr_resetPtr
-      .asFunction<void Function(GhosttySgrParser)>();
-
-  /// Set SGR parameters for parsing.
-  ///
-  /// Sets the SGR parameter list to parse. Parameters are the numeric values
-  /// from a CSI SGR sequence (e.g., for `ESC[1;31m`, params would be {1, 31}).
-  ///
-  /// The separators array optionally specifies the separator type for each
-  /// parameter position. Each byte should be either ';' for semicolon or ':'
-  /// for colon. This is needed for certain color formats that use colon
-  /// separators (e.g., `ESC[4:3m` for curly underline). Any invalid separator
-  /// values are treated as semicolons. The separators array must have the same
-  /// length as the params array, if it is not NULL.
-  ///
-  /// If separators is NULL, all parameters are assumed to be semicolon-separated.
-  ///
-  /// This function makes an internal copy of the parameter and separator data,
-  /// so the caller can safely free or modify the input arrays after this call.
-  ///
-  /// After calling this function, the parser is automatically reset and ready
-  /// to iterate from the beginning.
-  ///
-  /// @param parser The parser handle, must not be NULL
-  /// @param params Array of SGR parameter values
-  /// @param separators Optional array of separator characters (';' or ':'), or
-  /// NULL
-  /// @param len Number of parameters (and separators if provided)
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup sgr
-  GhosttyResult ghostty_sgr_set_params(
-    GhosttySgrParser parser,
-    ffi.Pointer<ffi.Uint16> params,
-    ffi.Pointer<ffi.Char> separators,
-    int len,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_sgr_set_params(parser, params, separators, len),
-    );
-  }
-
-  late final _ghostty_sgr_set_paramsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttySgrParser,
-            ffi.Pointer<ffi.Uint16>,
-            ffi.Pointer<ffi.Char>,
-            ffi.Size,
-          )
-        >
-      >('ghostty_sgr_set_params');
-  late final _ghostty_sgr_set_params = _ghostty_sgr_set_paramsPtr
-      .asFunction<
-        int Function(
-          GhosttySgrParser,
-          ffi.Pointer<ffi.Uint16>,
-          ffi.Pointer<ffi.Char>,
-          int,
-        )
-      >();
-
-  /// Get the next SGR attribute.
-  ///
-  /// Parses and returns the next attribute from the parameter list.
-  /// Call this function repeatedly until it returns false to process
-  /// all attributes in the sequence.
-  ///
-  /// @param parser The parser handle, must not be NULL
-  /// @param attr Pointer to store the next attribute
-  /// @return true if an attribute was returned, false if no more attributes
-  ///
-  /// @ingroup sgr
-  bool ghostty_sgr_next(
-    GhosttySgrParser parser,
-    ffi.Pointer<GhosttySgrAttribute> attr,
-  ) {
-    return _ghostty_sgr_next(parser, attr);
-  }
-
-  late final _ghostty_sgr_nextPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Bool Function(GhosttySgrParser, ffi.Pointer<GhosttySgrAttribute>)
-        >
-      >('ghostty_sgr_next');
-  late final _ghostty_sgr_next = _ghostty_sgr_nextPtr
-      .asFunction<
-        bool Function(GhosttySgrParser, ffi.Pointer<GhosttySgrAttribute>)
-      >();
-
-  /// Get the full parameter list from an unknown SGR attribute.
-  ///
-  /// This function retrieves the full parameter list that was provided to the
-  /// parser when an unknown attribute was encountered. Primarily useful in
-  /// WebAssembly environments where accessing struct fields directly is difficult.
-  ///
-  /// @param unknown The unknown attribute data
-  /// @param ptr Pointer to store the pointer to the parameter array (may be NULL)
-  /// @return The length of the full parameter array
-  ///
-  /// @ingroup sgr
-  int ghostty_sgr_unknown_full(
-    GhosttySgrUnknown unknown,
-    ffi.Pointer<ffi.Pointer<ffi.Uint16>> ptr,
-  ) {
-    return _ghostty_sgr_unknown_full(unknown, ptr);
-  }
-
-  late final _ghostty_sgr_unknown_fullPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Size Function(
-            GhosttySgrUnknown,
-            ffi.Pointer<ffi.Pointer<ffi.Uint16>>,
-          )
-        >
-      >('ghostty_sgr_unknown_full');
-  late final _ghostty_sgr_unknown_full = _ghostty_sgr_unknown_fullPtr
-      .asFunction<
-        int Function(GhosttySgrUnknown, ffi.Pointer<ffi.Pointer<ffi.Uint16>>)
-      >();
-
-  /// Get the partial parameter list from an unknown SGR attribute.
-  ///
-  /// This function retrieves the partial parameter list where parsing stopped
-  /// when an unknown attribute was encountered. Primarily useful in WebAssembly
-  /// environments where accessing struct fields directly is difficult.
-  ///
-  /// @param unknown The unknown attribute data
-  /// @param ptr Pointer to store the pointer to the parameter array (may be NULL)
-  /// @return The length of the partial parameter array
-  ///
-  /// @ingroup sgr
-  int ghostty_sgr_unknown_partial(
-    GhosttySgrUnknown unknown,
-    ffi.Pointer<ffi.Pointer<ffi.Uint16>> ptr,
-  ) {
-    return _ghostty_sgr_unknown_partial(unknown, ptr);
-  }
-
-  late final _ghostty_sgr_unknown_partialPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Size Function(
-            GhosttySgrUnknown,
-            ffi.Pointer<ffi.Pointer<ffi.Uint16>>,
-          )
-        >
-      >('ghostty_sgr_unknown_partial');
-  late final _ghostty_sgr_unknown_partial = _ghostty_sgr_unknown_partialPtr
-      .asFunction<
-        int Function(GhosttySgrUnknown, ffi.Pointer<ffi.Pointer<ffi.Uint16>>)
-      >();
-
-  /// Get the tag from an SGR attribute.
-  ///
-  /// This function extracts the tag that identifies which type of attribute
-  /// this is. Primarily useful in WebAssembly environments where accessing
-  /// struct fields directly is difficult.
-  ///
-  /// @param attr The SGR attribute
-  /// @return The attribute tag
-  ///
-  /// @ingroup sgr
-  GhosttySgrAttributeTag ghostty_sgr_attribute_tag(GhosttySgrAttribute attr) {
-    return GhosttySgrAttributeTag.fromValue(_ghostty_sgr_attribute_tag(attr));
-  }
-
-  late final _ghostty_sgr_attribute_tagPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.UnsignedInt Function(GhosttySgrAttribute)>
-      >('ghostty_sgr_attribute_tag');
-  late final _ghostty_sgr_attribute_tag = _ghostty_sgr_attribute_tagPtr
-      .asFunction<int Function(GhosttySgrAttribute)>();
-
-  /// Get the value from an SGR attribute.
-  ///
-  /// This function returns a pointer to the value union from an SGR attribute. Use
-  /// the tag to determine which field of the union is valid. Primarily useful in
-  /// WebAssembly environments where accessing struct fields directly is difficult.
-  ///
-  /// @param attr Pointer to the SGR attribute
-  /// @return Pointer to the attribute value union
-  ///
-  /// @ingroup sgr
-  ffi.Pointer<GhosttySgrAttributeValue> ghostty_sgr_attribute_value(
-    ffi.Pointer<GhosttySgrAttribute> attr,
-  ) {
-    return _ghostty_sgr_attribute_value(attr);
-  }
-
-  late final _ghostty_sgr_attribute_valuePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Pointer<GhosttySgrAttributeValue> Function(
-            ffi.Pointer<GhosttySgrAttribute>,
-          )
-        >
-      >('ghostty_sgr_attribute_value');
-  late final _ghostty_sgr_attribute_value = _ghostty_sgr_attribute_valuePtr
-      .asFunction<
-        ffi.Pointer<GhosttySgrAttributeValue> Function(
-          ffi.Pointer<GhosttySgrAttribute>,
-        )
-      >();
-
-  /// Create a new key event instance.
-  ///
-  /// Creates a new key event with default values. The event must be freed using
-  /// ghostty_key_event_free() when no longer needed.
-  ///
-  /// @param allocator Pointer to the allocator to use for memory management, or NULL to use the default allocator
-  /// @param event Pointer to store the created key event handle
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup key
-  GhosttyResult ghostty_key_event_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyKeyEvent> event,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_key_event_new(allocator, event));
-  }
-
-  late final _ghostty_key_event_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyKeyEvent>,
-          )
-        >
-      >('ghostty_key_event_new');
-  late final _ghostty_key_event_new = _ghostty_key_event_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyKeyEvent>,
-        )
-      >();
-
-  /// Free a key event instance.
-  ///
-  /// Releases all resources associated with the key event. After this call,
-  /// the event handle becomes invalid and must not be used.
-  ///
-  /// @param event The key event handle to free (may be NULL)
-  ///
-  /// @ingroup key
-  void ghostty_key_event_free(GhosttyKeyEvent event) {
-    return _ghostty_key_event_free(event);
-  }
-
-  late final _ghostty_key_event_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_free',
-      );
-  late final _ghostty_key_event_free = _ghostty_key_event_freePtr
-      .asFunction<void Function(GhosttyKeyEvent)>();
-
-  /// Set the key action (press, release, repeat).
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param action The action to set
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_action(
-    GhosttyKeyEvent event,
-    GhosttyKeyAction action,
-  ) {
-    return _ghostty_key_event_set_action(event, action.value);
-  }
-
-  late final _ghostty_key_event_set_actionPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent, ffi.UnsignedInt)>
-      >('ghostty_key_event_set_action');
-  late final _ghostty_key_event_set_action = _ghostty_key_event_set_actionPtr
-      .asFunction<void Function(GhosttyKeyEvent, int)>();
-
-  /// Get the key action (press, release, repeat).
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @return The key action
-  ///
-  /// @ingroup key
-  GhosttyKeyAction ghostty_key_event_get_action(GhosttyKeyEvent event) {
-    return GhosttyKeyAction.fromValue(_ghostty_key_event_get_action(event));
-  }
-
-  late final _ghostty_key_event_get_actionPtr =
-      _lookup<ffi.NativeFunction<ffi.UnsignedInt Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_get_action',
-      );
-  late final _ghostty_key_event_get_action = _ghostty_key_event_get_actionPtr
-      .asFunction<int Function(GhosttyKeyEvent)>();
-
-  /// Set the physical key code.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param key The physical key code to set
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_key(GhosttyKeyEvent event, GhosttyKey key) {
-    return _ghostty_key_event_set_key(event, key.value);
-  }
-
-  late final _ghostty_key_event_set_keyPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent, ffi.UnsignedInt)>
-      >('ghostty_key_event_set_key');
-  late final _ghostty_key_event_set_key = _ghostty_key_event_set_keyPtr
-      .asFunction<void Function(GhosttyKeyEvent, int)>();
-
-  /// Get the physical key code.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @return The physical key code
-  ///
-  /// @ingroup key
-  GhosttyKey ghostty_key_event_get_key(GhosttyKeyEvent event) {
-    return GhosttyKey.fromValue(_ghostty_key_event_get_key(event));
-  }
-
-  late final _ghostty_key_event_get_keyPtr =
-      _lookup<ffi.NativeFunction<ffi.UnsignedInt Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_get_key',
-      );
-  late final _ghostty_key_event_get_key = _ghostty_key_event_get_keyPtr
-      .asFunction<int Function(GhosttyKeyEvent)>();
-
-  /// Set the modifier keys bitmask.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param mods The modifier keys bitmask to set
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_mods(GhosttyKeyEvent event, int mods) {
-    return _ghostty_key_event_set_mods(event, mods);
-  }
-
-  late final _ghostty_key_event_set_modsPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent, GhosttyMods)>
-      >('ghostty_key_event_set_mods');
-  late final _ghostty_key_event_set_mods = _ghostty_key_event_set_modsPtr
-      .asFunction<void Function(GhosttyKeyEvent, int)>();
-
-  /// Get the modifier keys bitmask.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @return The modifier keys bitmask
-  ///
-  /// @ingroup key
-  int ghostty_key_event_get_mods(GhosttyKeyEvent event) {
-    return _ghostty_key_event_get_mods(event);
-  }
-
-  late final _ghostty_key_event_get_modsPtr =
-      _lookup<ffi.NativeFunction<GhosttyMods Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_get_mods',
-      );
-  late final _ghostty_key_event_get_mods = _ghostty_key_event_get_modsPtr
-      .asFunction<int Function(GhosttyKeyEvent)>();
-
-  /// Set the consumed modifiers bitmask.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param consumed_mods The consumed modifiers bitmask to set
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_consumed_mods(
-    GhosttyKeyEvent event,
-    int consumed_mods,
-  ) {
-    return _ghostty_key_event_set_consumed_mods(event, consumed_mods);
-  }
-
-  late final _ghostty_key_event_set_consumed_modsPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent, GhosttyMods)>
-      >('ghostty_key_event_set_consumed_mods');
-  late final _ghostty_key_event_set_consumed_mods =
-      _ghostty_key_event_set_consumed_modsPtr
-          .asFunction<void Function(GhosttyKeyEvent, int)>();
-
-  /// Get the consumed modifiers bitmask.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @return The consumed modifiers bitmask
-  ///
-  /// @ingroup key
-  int ghostty_key_event_get_consumed_mods(GhosttyKeyEvent event) {
-    return _ghostty_key_event_get_consumed_mods(event);
-  }
-
-  late final _ghostty_key_event_get_consumed_modsPtr =
-      _lookup<ffi.NativeFunction<GhosttyMods Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_get_consumed_mods',
-      );
-  late final _ghostty_key_event_get_consumed_mods =
-      _ghostty_key_event_get_consumed_modsPtr
-          .asFunction<int Function(GhosttyKeyEvent)>();
-
-  /// Set whether the key event is part of a composition sequence.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param composing Whether the key event is part of a composition sequence
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_composing(GhosttyKeyEvent event, bool composing) {
-    return _ghostty_key_event_set_composing(event, composing);
-  }
-
-  late final _ghostty_key_event_set_composingPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent, ffi.Bool)>>(
-        'ghostty_key_event_set_composing',
-      );
-  late final _ghostty_key_event_set_composing =
-      _ghostty_key_event_set_composingPtr
-          .asFunction<void Function(GhosttyKeyEvent, bool)>();
-
-  /// Get whether the key event is part of a composition sequence.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @return Whether the key event is part of a composition sequence
-  ///
-  /// @ingroup key
-  bool ghostty_key_event_get_composing(GhosttyKeyEvent event) {
-    return _ghostty_key_event_get_composing(event);
-  }
-
-  late final _ghostty_key_event_get_composingPtr =
-      _lookup<ffi.NativeFunction<ffi.Bool Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_get_composing',
-      );
-  late final _ghostty_key_event_get_composing =
-      _ghostty_key_event_get_composingPtr
-          .asFunction<bool Function(GhosttyKeyEvent)>();
-
-  /// Set the UTF-8 text generated by the key event.
-  ///
-  /// The key event does NOT take ownership of the text pointer. The caller
-  /// must ensure the string remains valid for the lifetime needed by the event.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param utf8 The UTF-8 text to set (or NULL for empty)
-  /// @param len Length of the UTF-8 text in bytes
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_utf8(
-    GhosttyKeyEvent event,
-    ffi.Pointer<ffi.Char> utf8,
-    int len,
-  ) {
-    return _ghostty_key_event_set_utf8(event, utf8, len);
-  }
-
-  late final _ghostty_key_event_set_utf8Ptr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyKeyEvent, ffi.Pointer<ffi.Char>, ffi.Size)
-        >
-      >('ghostty_key_event_set_utf8');
-  late final _ghostty_key_event_set_utf8 = _ghostty_key_event_set_utf8Ptr
-      .asFunction<void Function(GhosttyKeyEvent, ffi.Pointer<ffi.Char>, int)>();
-
-  /// Get the UTF-8 text generated by the key event.
-  ///
-  /// The returned pointer is valid until the event is freed or the UTF-8 text is modified.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param len Pointer to store the length of the UTF-8 text in bytes (may be NULL)
-  /// @return The UTF-8 text (or NULL for empty)
-  ///
-  /// @ingroup key
-  ffi.Pointer<ffi.Char> ghostty_key_event_get_utf8(
-    GhosttyKeyEvent event,
-    ffi.Pointer<ffi.Size> len,
-  ) {
-    return _ghostty_key_event_get_utf8(event, len);
-  }
-
-  late final _ghostty_key_event_get_utf8Ptr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(GhosttyKeyEvent, ffi.Pointer<ffi.Size>)
-        >
-      >('ghostty_key_event_get_utf8');
-  late final _ghostty_key_event_get_utf8 = _ghostty_key_event_get_utf8Ptr
-      .asFunction<
-        ffi.Pointer<ffi.Char> Function(GhosttyKeyEvent, ffi.Pointer<ffi.Size>)
-      >();
-
-  /// Set the unshifted Unicode codepoint.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @param codepoint The unshifted Unicode codepoint to set
-  ///
-  /// @ingroup key
-  void ghostty_key_event_set_unshifted_codepoint(
-    GhosttyKeyEvent event,
-    int codepoint,
-  ) {
-    return _ghostty_key_event_set_unshifted_codepoint(event, codepoint);
-  }
-
-  late final _ghostty_key_event_set_unshifted_codepointPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyKeyEvent, ffi.Uint32)>
-      >('ghostty_key_event_set_unshifted_codepoint');
-  late final _ghostty_key_event_set_unshifted_codepoint =
-      _ghostty_key_event_set_unshifted_codepointPtr
-          .asFunction<void Function(GhosttyKeyEvent, int)>();
-
-  /// Get the unshifted Unicode codepoint.
-  ///
-  /// @param event The key event handle, must not be NULL
-  /// @return The unshifted Unicode codepoint
-  ///
-  /// @ingroup key
-  int ghostty_key_event_get_unshifted_codepoint(GhosttyKeyEvent event) {
-    return _ghostty_key_event_get_unshifted_codepoint(event);
-  }
-
-  late final _ghostty_key_event_get_unshifted_codepointPtr =
-      _lookup<ffi.NativeFunction<ffi.Uint32 Function(GhosttyKeyEvent)>>(
-        'ghostty_key_event_get_unshifted_codepoint',
-      );
-  late final _ghostty_key_event_get_unshifted_codepoint =
-      _ghostty_key_event_get_unshifted_codepointPtr
-          .asFunction<int Function(GhosttyKeyEvent)>();
-
-  /// Create a new key encoder instance.
-  ///
-  /// Creates a new key encoder with default options. The encoder can be configured
-  /// using ghostty_key_encoder_setopt() and must be freed using
-  /// ghostty_key_encoder_free() when no longer needed.
-  ///
-  /// @param allocator Pointer to the allocator to use for memory management, or NULL to use the default allocator
-  /// @param encoder Pointer to store the created encoder handle
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup key
-  GhosttyResult ghostty_key_encoder_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyKeyEncoder> encoder,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_key_encoder_new(allocator, encoder),
-    );
-  }
-
-  late final _ghostty_key_encoder_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyKeyEncoder>,
-          )
-        >
-      >('ghostty_key_encoder_new');
-  late final _ghostty_key_encoder_new = _ghostty_key_encoder_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyKeyEncoder>,
-        )
-      >();
-
-  /// Free a key encoder instance.
-  ///
-  /// Releases all resources associated with the key encoder. After this call,
-  /// the encoder handle becomes invalid and must not be used.
-  ///
-  /// @param encoder The encoder handle to free (may be NULL)
-  ///
-  /// @ingroup key
-  void ghostty_key_encoder_free(GhosttyKeyEncoder encoder) {
-    return _ghostty_key_encoder_free(encoder);
-  }
-
-  late final _ghostty_key_encoder_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyKeyEncoder)>>(
-        'ghostty_key_encoder_free',
-      );
-  late final _ghostty_key_encoder_free = _ghostty_key_encoder_freePtr
-      .asFunction<void Function(GhosttyKeyEncoder)>();
-
-  /// Set an option on the key encoder.
-  ///
-  /// Configures the behavior of the key encoder. Options control various aspects
-  /// of encoding such as terminal modes (cursor key application mode, keypad mode),
-  /// protocol selection (Kitty keyboard protocol flags), and platform-specific
-  /// behaviors (macOS option-as-alt).
-  ///
-  /// If you are using a terminal instance, you can set the key encoding
-  /// options based on the active terminal state (e.g. legacy vs Kitty mode
-  /// and associated flags) with ghostty_key_encoder_setopt_from_terminal().
-  ///
-  /// A null pointer value does nothing. It does not reset the value to the
-  /// default. The setopt call will do nothing.
-  ///
-  /// @param encoder The encoder handle, must not be NULL
-  /// @param option The option to set
-  /// @param value Pointer to the value to set (type depends on the option)
-  ///
-  /// @ingroup key
-  void ghostty_key_encoder_setopt(
-    GhosttyKeyEncoder encoder,
-    GhosttyKeyEncoderOption option,
-    ffi.Pointer<ffi.Void> value,
-  ) {
-    return _ghostty_key_encoder_setopt(encoder, option.value, value);
-  }
-
-  late final _ghostty_key_encoder_setoptPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            GhosttyKeyEncoder,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_key_encoder_setopt');
-  late final _ghostty_key_encoder_setopt = _ghostty_key_encoder_setoptPtr
-      .asFunction<
-        void Function(GhosttyKeyEncoder, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Set encoder options from a terminal's current state.
-  ///
-  /// Reads the terminal's current modes and flags and applies them to the
-  /// encoder's options. This sets cursor key application mode, keypad mode,
-  /// alt escape prefix, modifyOtherKeys state, and Kitty keyboard protocol
-  /// flags from the terminal state.
-  ///
-  /// Note that the `macos_option_as_alt` option cannot be determined from
-  /// terminal state and is reset to `GHOSTTY_OPTION_AS_ALT_FALSE` by this
-  /// call. Use ghostty_key_encoder_setopt() to set it afterward if needed.
-  ///
-  /// @param encoder The encoder handle, must not be NULL
-  /// @param terminal The terminal handle, must not be NULL
-  ///
-  /// @ingroup key
-  void ghostty_key_encoder_setopt_from_terminal(
-    GhosttyKeyEncoder encoder,
-    GhosttyTerminal terminal,
-  ) {
-    return _ghostty_key_encoder_setopt_from_terminal(encoder, terminal);
-  }
-
-  late final _ghostty_key_encoder_setopt_from_terminalPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyKeyEncoder, GhosttyTerminal)
-        >
-      >('ghostty_key_encoder_setopt_from_terminal');
-  late final _ghostty_key_encoder_setopt_from_terminal =
-      _ghostty_key_encoder_setopt_from_terminalPtr
-          .asFunction<void Function(GhosttyKeyEncoder, GhosttyTerminal)>();
-
-  /// Encode a key event into a terminal escape sequence.
-  ///
-  /// Converts a key event into the appropriate terminal escape sequence based on
-  /// the encoder's current options. The sequence is written to the provided buffer.
-  ///
-  /// Not all key events produce output. For example, unmodified modifier keys
-  /// typically don't generate escape sequences. Check the out_len parameter to
-  /// determine if any data was written.
-  ///
-  /// If the output buffer is too small, this function returns GHOSTTY_OUT_OF_SPACE
-  /// and out_len will contain the required buffer size. The caller can then
-  /// allocate a larger buffer and call the function again.
-  ///
-  /// @param encoder The encoder handle, must not be NULL
-  /// @param event The key event to encode, must not be NULL
-  /// @param out_buf Buffer to write the encoded sequence to
-  /// @param out_buf_size Size of the output buffer in bytes
-  /// @param out_len Pointer to store the number of bytes written (may be NULL)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if buffer too small, or other error code
-  ///
-  /// ## Example: Calculate required buffer size
-  ///
-  /// @code{.c}
-  /// // Query the required size with a NULL buffer (always returns OUT_OF_SPACE)
-  /// size_t required = 0;
-  /// GhosttyResult result = ghostty_key_encoder_encode(encoder, event, NULL, 0, &required);
-  /// assert(result == GHOSTTY_OUT_OF_SPACE);
-  ///
-  /// // Allocate buffer of required size
-  /// char *buf = malloc(required);
-  ///
-  /// // Encode with properly sized buffer
-  /// size_t written = 0;
-  /// result = ghostty_key_encoder_encode(encoder, event, buf, required, &written);
-  /// assert(result == GHOSTTY_SUCCESS);
-  ///
-  /// // Use the encoded sequence...
-  ///
-  /// free(buf);
-  /// @endcode
-  ///
-  /// ## Example: Direct encoding with static buffer
-  ///
-  /// @code{.c}
-  /// // Most escape sequences are short, so a static buffer often suffices
-  /// char buf[128];
-  /// size_t written = 0;
-  /// GhosttyResult result = ghostty_key_encoder_encode(encoder, event, buf, sizeof(buf), &written);
-  ///
-  /// if (result == GHOSTTY_SUCCESS) {
-  /// // Write the encoded sequence to the terminal
-  /// write(pty_fd, buf, written);
-  /// } else if (result == GHOSTTY_OUT_OF_SPACE) {
-  /// // Buffer too small, written contains required size
-  /// char *dynamic_buf = malloc(written);
-  /// result = ghostty_key_encoder_encode(encoder, event, dynamic_buf, written, &written);
-  /// assert(result == GHOSTTY_SUCCESS);
-  /// write(pty_fd, dynamic_buf, written);
-  /// free(dynamic_buf);
-  /// }
-  /// @endcode
-  ///
-  /// @ingroup key
-  GhosttyResult ghostty_key_encoder_encode(
-    GhosttyKeyEncoder encoder,
-    GhosttyKeyEvent event,
-    ffi.Pointer<ffi.Char> out_buf,
-    int out_buf_size,
-    ffi.Pointer<ffi.Size> out_len,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_key_encoder_encode(
-        encoder,
-        event,
-        out_buf,
-        out_buf_size,
-        out_len,
-      ),
-    );
-  }
-
-  late final _ghostty_key_encoder_encodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyKeyEncoder,
-            GhosttyKeyEvent,
-            ffi.Pointer<ffi.Char>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_key_encoder_encode');
-  late final _ghostty_key_encoder_encode = _ghostty_key_encoder_encodePtr
-      .asFunction<
-        int Function(
-          GhosttyKeyEncoder,
-          GhosttyKeyEvent,
-          ffi.Pointer<ffi.Char>,
-          int,
-          ffi.Pointer<ffi.Size>,
-        )
-      >();
-
-  /// Create a new mouse event instance.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param event Pointer to store the created event handle
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup mouse
-  GhosttyResult ghostty_mouse_event_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyMouseEvent> event,
-  ) {
-    return GhosttyResult.fromValue(_ghostty_mouse_event_new(allocator, event));
-  }
-
-  late final _ghostty_mouse_event_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyMouseEvent>,
-          )
-        >
-      >('ghostty_mouse_event_new');
-  late final _ghostty_mouse_event_new = _ghostty_mouse_event_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyMouseEvent>,
-        )
-      >();
-
-  /// Free a mouse event instance.
-  ///
-  /// @param event The mouse event handle to free (may be NULL)
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_event_free(GhosttyMouseEvent event) {
-    return _ghostty_mouse_event_free(event);
-  }
-
-  late final _ghostty_mouse_event_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyMouseEvent)>>(
-        'ghostty_mouse_event_free',
-      );
-  late final _ghostty_mouse_event_free = _ghostty_mouse_event_freePtr
-      .asFunction<void Function(GhosttyMouseEvent)>();
-
-  /// Set the event action.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @param action The action to set
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_event_set_action(
-    GhosttyMouseEvent event,
-    GhosttyMouseAction action,
-  ) {
-    return _ghostty_mouse_event_set_action(event, action.value);
-  }
-
-  late final _ghostty_mouse_event_set_actionPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyMouseEvent, ffi.UnsignedInt)
-        >
-      >('ghostty_mouse_event_set_action');
-  late final _ghostty_mouse_event_set_action =
-      _ghostty_mouse_event_set_actionPtr
-          .asFunction<void Function(GhosttyMouseEvent, int)>();
-
-  /// Get the event action.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @return The event action
-  ///
-  /// @ingroup mouse
-  GhosttyMouseAction ghostty_mouse_event_get_action(GhosttyMouseEvent event) {
-    return GhosttyMouseAction.fromValue(_ghostty_mouse_event_get_action(event));
-  }
-
-  late final _ghostty_mouse_event_get_actionPtr =
-      _lookup<ffi.NativeFunction<ffi.UnsignedInt Function(GhosttyMouseEvent)>>(
-        'ghostty_mouse_event_get_action',
-      );
-  late final _ghostty_mouse_event_get_action =
-      _ghostty_mouse_event_get_actionPtr
-          .asFunction<int Function(GhosttyMouseEvent)>();
-
-  /// Set the event button.
-  ///
-  /// This sets a concrete button identity for the event.
-  /// To represent "no button" (for motion events), use
-  /// ghostty_mouse_event_clear_button().
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @param button The button to set
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_event_set_button(
-    GhosttyMouseEvent event,
-    GhosttyMouseButton button,
-  ) {
-    return _ghostty_mouse_event_set_button(event, button.value);
-  }
-
-  late final _ghostty_mouse_event_set_buttonPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyMouseEvent, ffi.UnsignedInt)
-        >
-      >('ghostty_mouse_event_set_button');
-  late final _ghostty_mouse_event_set_button =
-      _ghostty_mouse_event_set_buttonPtr
-          .asFunction<void Function(GhosttyMouseEvent, int)>();
-
-  /// Clear the event button.
-  ///
-  /// This sets the event button to "none".
-  ///
-  /// @param event The event handle, must not be NULL
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_event_clear_button(GhosttyMouseEvent event) {
-    return _ghostty_mouse_event_clear_button(event);
-  }
-
-  late final _ghostty_mouse_event_clear_buttonPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyMouseEvent)>>(
-        'ghostty_mouse_event_clear_button',
-      );
-  late final _ghostty_mouse_event_clear_button =
-      _ghostty_mouse_event_clear_buttonPtr
-          .asFunction<void Function(GhosttyMouseEvent)>();
-
-  /// Get the event button.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @param out_button Output pointer for the button value (may be NULL)
-  /// @return true if a button is set, false if no button is set
-  ///
-  /// @ingroup mouse
-  bool ghostty_mouse_event_get_button(
-    GhosttyMouseEvent event,
-    ffi.Pointer<ffi.UnsignedInt> out_button,
-  ) {
-    return _ghostty_mouse_event_get_button(event, out_button);
-  }
-
-  late final _ghostty_mouse_event_get_buttonPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Bool Function(GhosttyMouseEvent, ffi.Pointer<ffi.UnsignedInt>)
-        >
-      >('ghostty_mouse_event_get_button');
-  late final _ghostty_mouse_event_get_button =
-      _ghostty_mouse_event_get_buttonPtr
-          .asFunction<
-            bool Function(GhosttyMouseEvent, ffi.Pointer<ffi.UnsignedInt>)
-          >();
-
-  /// Set keyboard modifiers held during the event.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @param mods Modifier bitmask
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_event_set_mods(GhosttyMouseEvent event, int mods) {
-    return _ghostty_mouse_event_set_mods(event, mods);
-  }
-
-  late final _ghostty_mouse_event_set_modsPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Void Function(GhosttyMouseEvent, GhosttyMods)>
-      >('ghostty_mouse_event_set_mods');
-  late final _ghostty_mouse_event_set_mods = _ghostty_mouse_event_set_modsPtr
-      .asFunction<void Function(GhosttyMouseEvent, int)>();
-
-  /// Get keyboard modifiers held during the event.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @return Modifier bitmask
-  ///
-  /// @ingroup mouse
-  int ghostty_mouse_event_get_mods(GhosttyMouseEvent event) {
-    return _ghostty_mouse_event_get_mods(event);
-  }
-
-  late final _ghostty_mouse_event_get_modsPtr =
-      _lookup<ffi.NativeFunction<GhosttyMods Function(GhosttyMouseEvent)>>(
-        'ghostty_mouse_event_get_mods',
-      );
-  late final _ghostty_mouse_event_get_mods = _ghostty_mouse_event_get_modsPtr
-      .asFunction<int Function(GhosttyMouseEvent)>();
-
-  /// Set the event position in surface-space pixels.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @param position The position to set
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_event_set_position(
-    GhosttyMouseEvent event,
-    GhosttyMousePosition position,
-  ) {
-    return _ghostty_mouse_event_set_position(event, position);
-  }
-
-  late final _ghostty_mouse_event_set_positionPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyMouseEvent, GhosttyMousePosition)
-        >
-      >('ghostty_mouse_event_set_position');
-  late final _ghostty_mouse_event_set_position =
-      _ghostty_mouse_event_set_positionPtr
-          .asFunction<void Function(GhosttyMouseEvent, GhosttyMousePosition)>();
-
-  /// Get the event position in surface-space pixels.
-  ///
-  /// @param event The event handle, must not be NULL
-  /// @return The current event position
-  ///
-  /// @ingroup mouse
-  GhosttyMousePosition ghostty_mouse_event_get_position(
-    GhosttyMouseEvent event,
-  ) {
-    return _ghostty_mouse_event_get_position(event);
-  }
-
-  late final _ghostty_mouse_event_get_positionPtr =
-      _lookup<
-        ffi.NativeFunction<GhosttyMousePosition Function(GhosttyMouseEvent)>
-      >('ghostty_mouse_event_get_position');
-  late final _ghostty_mouse_event_get_position =
-      _ghostty_mouse_event_get_positionPtr
-          .asFunction<GhosttyMousePosition Function(GhosttyMouseEvent)>();
-
-  /// Create a new mouse encoder instance.
-  ///
-  /// @param allocator Pointer to allocator, or NULL to use the default allocator
-  /// @param encoder Pointer to store the created encoder handle
-  /// @return GHOSTTY_SUCCESS on success, or an error code on failure
-  ///
-  /// @ingroup mouse
-  GhosttyResult ghostty_mouse_encoder_new(
-    ffi.Pointer<GhosttyAllocator> allocator,
-    ffi.Pointer<GhosttyMouseEncoder> encoder,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_mouse_encoder_new(allocator, encoder),
-    );
-  }
-
-  late final _ghostty_mouse_encoder_newPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.Pointer<GhosttyAllocator>,
-            ffi.Pointer<GhosttyMouseEncoder>,
-          )
-        >
-      >('ghostty_mouse_encoder_new');
-  late final _ghostty_mouse_encoder_new = _ghostty_mouse_encoder_newPtr
-      .asFunction<
-        int Function(
-          ffi.Pointer<GhosttyAllocator>,
-          ffi.Pointer<GhosttyMouseEncoder>,
-        )
-      >();
-
-  /// Free a mouse encoder instance.
-  ///
-  /// @param encoder The encoder handle to free (may be NULL)
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_encoder_free(GhosttyMouseEncoder encoder) {
-    return _ghostty_mouse_encoder_free(encoder);
-  }
-
-  late final _ghostty_mouse_encoder_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyMouseEncoder)>>(
-        'ghostty_mouse_encoder_free',
-      );
-  late final _ghostty_mouse_encoder_free = _ghostty_mouse_encoder_freePtr
-      .asFunction<void Function(GhosttyMouseEncoder)>();
-
-  /// Set an option on the mouse encoder.
-  ///
-  /// A null pointer value does nothing. It does not reset to defaults.
-  ///
-  /// @param encoder The encoder handle, must not be NULL
-  /// @param option The option to set
-  /// @param value Pointer to option value (type depends on option)
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_encoder_setopt(
-    GhosttyMouseEncoder encoder,
-    GhosttyMouseEncoderOption option,
-    ffi.Pointer<ffi.Void> value,
-  ) {
-    return _ghostty_mouse_encoder_setopt(encoder, option.value, value);
-  }
-
-  late final _ghostty_mouse_encoder_setoptPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            GhosttyMouseEncoder,
-            ffi.UnsignedInt,
-            ffi.Pointer<ffi.Void>,
-          )
-        >
-      >('ghostty_mouse_encoder_setopt');
-  late final _ghostty_mouse_encoder_setopt = _ghostty_mouse_encoder_setoptPtr
-      .asFunction<
-        void Function(GhosttyMouseEncoder, int, ffi.Pointer<ffi.Void>)
-      >();
-
-  /// Set encoder options from a terminal's current state.
-  ///
-  /// This sets tracking mode and output format from terminal state.
-  /// It does not modify size or any-button state.
-  ///
-  /// @param encoder The encoder handle, must not be NULL
-  /// @param terminal The terminal handle, must not be NULL
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_encoder_setopt_from_terminal(
-    GhosttyMouseEncoder encoder,
-    GhosttyTerminal terminal,
-  ) {
-    return _ghostty_mouse_encoder_setopt_from_terminal(encoder, terminal);
-  }
-
-  late final _ghostty_mouse_encoder_setopt_from_terminalPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(GhosttyMouseEncoder, GhosttyTerminal)
-        >
-      >('ghostty_mouse_encoder_setopt_from_terminal');
-  late final _ghostty_mouse_encoder_setopt_from_terminal =
-      _ghostty_mouse_encoder_setopt_from_terminalPtr
-          .asFunction<void Function(GhosttyMouseEncoder, GhosttyTerminal)>();
-
-  /// Reset internal encoder state.
-  ///
-  /// This clears motion deduplication state (last tracked cell).
-  ///
-  /// @param encoder The encoder handle (may be NULL)
-  ///
-  /// @ingroup mouse
-  void ghostty_mouse_encoder_reset(GhosttyMouseEncoder encoder) {
-    return _ghostty_mouse_encoder_reset(encoder);
-  }
-
-  late final _ghostty_mouse_encoder_resetPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(GhosttyMouseEncoder)>>(
-        'ghostty_mouse_encoder_reset',
-      );
-  late final _ghostty_mouse_encoder_reset = _ghostty_mouse_encoder_resetPtr
-      .asFunction<void Function(GhosttyMouseEncoder)>();
-
-  /// Encode a mouse event into a terminal escape sequence.
-  ///
-  /// Not all mouse events produce output. In such cases this returns
-  /// GHOSTTY_SUCCESS with out_len set to 0.
-  ///
-  /// If the output buffer is too small, this returns GHOSTTY_OUT_OF_SPACE
-  /// and out_len contains the required size.
-  ///
-  /// @param encoder The encoder handle, must not be NULL
-  /// @param event The mouse event to encode, must not be NULL
-  /// @param out_buf Buffer to write encoded bytes to, or NULL to query required size
-  /// @param out_buf_size Size of out_buf in bytes
-  /// @param out_len Pointer to store bytes written (or required bytes on failure)
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if buffer is too small,
-  /// or another error code
-  ///
-  /// @ingroup mouse
-  GhosttyResult ghostty_mouse_encoder_encode(
-    GhosttyMouseEncoder encoder,
-    GhosttyMouseEvent event,
-    ffi.Pointer<ffi.Char> out_buf,
-    int out_buf_size,
-    ffi.Pointer<ffi.Size> out_len,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_mouse_encoder_encode(
-        encoder,
-        event,
-        out_buf,
-        out_buf_size,
-        out_len,
-      ),
-    );
-  }
-
-  late final _ghostty_mouse_encoder_encodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            GhosttyMouseEncoder,
-            GhosttyMouseEvent,
-            ffi.Pointer<ffi.Char>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_mouse_encoder_encode');
-  late final _ghostty_mouse_encoder_encode = _ghostty_mouse_encoder_encodePtr
-      .asFunction<
-        int Function(
-          GhosttyMouseEncoder,
-          GhosttyMouseEvent,
-          ffi.Pointer<ffi.Char>,
-          int,
-          ffi.Pointer<ffi.Size>,
-        )
-      >();
-
-  /// Check if paste data is safe to paste into the terminal.
-  ///
-  /// Data is considered unsafe if it contains:
-  /// - Newlines (`\n`) which can inject commands
-  /// - The bracketed paste end sequence (`\x1b[201~`) which can be used
-  /// to exit bracketed paste mode and inject commands
-  ///
-  /// This check is conservative and considers data unsafe regardless of
-  /// current terminal state.
-  ///
-  /// @param data The paste data to check (must not be NULL)
-  /// @param len The length of the data in bytes
-  /// @return true if the data is safe to paste, false otherwise
-  bool ghostty_paste_is_safe(ffi.Pointer<ffi.Char> data, int len) {
-    return _ghostty_paste_is_safe(data, len);
-  }
-
-  late final _ghostty_paste_is_safePtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Char>, ffi.Size)>
-      >('ghostty_paste_is_safe');
-  late final _ghostty_paste_is_safe = _ghostty_paste_is_safePtr
-      .asFunction<bool Function(ffi.Pointer<ffi.Char>, int)>();
-
-  /// Encode a terminal size report into an escape sequence.
-  ///
-  /// Encodes a size report in the format specified by @p style into the
-  /// provided buffer.
-  ///
-  /// If the buffer is too small, the function returns GHOSTTY_OUT_OF_SPACE
-  /// and writes the required buffer size to @p out_written. The caller can
-  /// then retry with a sufficiently sized buffer.
-  ///
-  /// @param style The size report format to encode
-  /// @param size Terminal size information
-  /// @param buf Output buffer to write the encoded sequence into (may be NULL)
-  /// @param buf_len Size of the output buffer in bytes
-  /// @param[out] out_written On success, the number of bytes written. On
-  /// GHOSTTY_OUT_OF_SPACE, the required buffer size.
-  /// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if the buffer
-  /// is too small
-  GhosttyResult ghostty_size_report_encode(
-    GhosttySizeReportStyle style,
-    GhosttySizeReportSize size,
-    ffi.Pointer<ffi.Char> buf,
-    int buf_len,
-    ffi.Pointer<ffi.Size> out_written,
-  ) {
-    return GhosttyResult.fromValue(
-      _ghostty_size_report_encode(style.value, size, buf, buf_len, out_written),
-    );
-  }
-
-  late final _ghostty_size_report_encodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Int Function(
-            ffi.UnsignedInt,
-            GhosttySizeReportSize,
-            ffi.Pointer<ffi.Char>,
-            ffi.Size,
-            ffi.Pointer<ffi.Size>,
-          )
-        >
-      >('ghostty_size_report_encode');
-  late final _ghostty_size_report_encode = _ghostty_size_report_encodePtr
-      .asFunction<
-        int Function(
-          int,
-          GhosttySizeReportSize,
-          ffi.Pointer<ffi.Char>,
-          int,
-          ffi.Pointer<ffi.Size>,
-        )
-      >();
-}
+/// Get the RGB color components.
+///
+/// This function extracts the individual red, green, and blue components
+/// from a GhosttyColorRgb value. Primarily useful in WebAssembly environments
+/// where accessing struct fields directly is difficult.
+///
+/// @param color The RGB color value
+/// @param r Pointer to store the red component (0-255)
+/// @param g Pointer to store the green component (0-255)
+/// @param b Pointer to store the blue component (0-255)
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Void Function(
+    GhosttyColorRgb,
+    ffi.Pointer<ffi.Uint8>,
+    ffi.Pointer<ffi.Uint8>,
+    ffi.Pointer<ffi.Uint8>,
+  )
+>()
+external void ghostty_color_rgb_get(
+  GhosttyColorRgb color,
+  ffi.Pointer<ffi.Uint8> r,
+  ffi.Pointer<ffi.Uint8> g,
+  ffi.Pointer<ffi.Uint8> b,
+);
+
+/// Encode a focus event into a terminal escape sequence.
+///
+/// Encodes a focus gained (CSI I) or focus lost (CSI O) report into the
+/// provided buffer.
+///
+/// If the buffer is too small, the function returns GHOSTTY_OUT_OF_SPACE
+/// and writes the required buffer size to @p out_written. The caller can
+/// then retry with a sufficiently sized buffer.
+///
+/// @param event The focus event to encode
+/// @param buf Output buffer to write the encoded sequence into (may be NULL)
+/// @param buf_len Size of the output buffer in bytes
+/// @param[out] out_written On success, the number of bytes written. On
+/// GHOSTTY_OUT_OF_SPACE, the required buffer size.
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if the buffer
+/// is too small
+@ffi.Native<
+  ffi.Int Function(
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Char>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_focus_encode')
+external int _ghostty_focus_encode(
+  int event,
+  ffi.Pointer<ffi.Char> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+);
+
+GhosttyResult ghostty_focus_encode(
+  GhosttyFocusEvent event,
+  ffi.Pointer<ffi.Char> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+) => GhosttyResult.fromValue(
+  _ghostty_focus_encode(event.value, buf, buf_len, out_written),
+);
+
+/// Encode a DECRPM (DEC Private Mode Report) response sequence.
+///
+/// Writes a mode report escape sequence into the provided buffer.
+/// The generated sequence has the form:
+/// - DEC private mode: CSI ? Ps1 ; Ps2 $ y
+/// - ANSI mode:        CSI Ps1 ; Ps2 $ y
+///
+/// If the buffer is too small, the function returns GHOSTTY_OUT_OF_SPACE
+/// and writes the required buffer size to @p out_written. The caller can
+/// then retry with a sufficiently sized buffer.
+///
+/// @param mode The mode identifying the mode to report on
+/// @param state The report state for this mode
+/// @param buf Output buffer to write the encoded sequence into (may be NULL)
+/// @param buf_len Size of the output buffer in bytes
+/// @param[out] out_written On success, the number of bytes written. On
+/// GHOSTTY_OUT_OF_SPACE, the required buffer size.
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if the buffer
+/// is too small
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyMode,
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Char>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_mode_report_encode')
+external int _ghostty_mode_report_encode(
+  int mode,
+  int state,
+  ffi.Pointer<ffi.Char> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+);
+
+GhosttyResult ghostty_mode_report_encode(
+  DartGhosttyMode mode,
+  GhosttyModeReportState state,
+  ffi.Pointer<ffi.Char> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+) => GhosttyResult.fromValue(
+  _ghostty_mode_report_encode(mode, state.value, buf, buf_len, out_written),
+);
+
+/// Get data from a cell.
+///
+/// Extracts typed data from the given cell based on the specified
+/// data type. The output pointer must be of the appropriate type for the
+/// requested data kind. Valid data types and output types are documented
+/// in the `GhosttyCellData` enum.
+///
+/// @param cell The cell value
+/// @param data The type of data to extract
+/// @param out Pointer to store the extracted data (type depends on data parameter)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the
+/// data type is invalid
+///
+/// @ingroup screen
+@ffi.Native<
+  ffi.Int Function(GhosttyCell, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_cell_get')
+external int _ghostty_cell_get(int cell, int data, ffi.Pointer<ffi.Void> out);
+
+GhosttyResult ghostty_cell_get(
+  DartGhosttyCell cell,
+  GhosttyCellData data,
+  ffi.Pointer<ffi.Void> out,
+) => GhosttyResult.fromValue(_ghostty_cell_get(cell, data.value, out));
+
+/// Get data from a row.
+///
+/// Extracts typed data from the given row based on the specified
+/// data type. The output pointer must be of the appropriate type for the
+/// requested data kind. Valid data types and output types are documented
+/// in the `GhosttyRowData` enum.
+///
+/// @param row The row value
+/// @param data The type of data to extract
+/// @param out Pointer to store the extracted data (type depends on data parameter)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the
+/// data type is invalid
+///
+/// @ingroup screen
+@ffi.Native<
+  ffi.Int Function(GhosttyRow, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_row_get')
+external int _ghostty_row_get(int row, int data, ffi.Pointer<ffi.Void> out);
+
+GhosttyResult ghostty_row_get(
+  DartGhosttyRow row,
+  GhosttyRowData data,
+  ffi.Pointer<ffi.Void> out,
+) => GhosttyResult.fromValue(_ghostty_row_get(row, data.value, out));
+
+/// Get the default style.
+///
+/// Initializes the style to the default values (no colors, no flags).
+///
+/// @param style Pointer to the style to initialize
+///
+/// @ingroup style
+@ffi.Native<ffi.Void Function(ffi.Pointer<GhosttyStyle>)>()
+external void ghostty_style_default(ffi.Pointer<GhosttyStyle> style);
+
+/// Check if a style is the default style.
+///
+/// Returns true if all colors are unset and all flags are off.
+///
+/// @param style Pointer to the style to check
+/// @return true if the style is the default style
+///
+/// @ingroup style
+@ffi.Native<ffi.Bool Function(ffi.Pointer<GhosttyStyle>)>()
+external bool ghostty_style_is_default(ffi.Pointer<GhosttyStyle> style);
+
+/// Get the cell from a grid reference.
+///
+/// @param ref Pointer to the grid reference
+/// @param[out] out_cell On success, set to the cell at the ref's position (may be NULL)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
+/// node is NULL
+///
+/// @ingroup grid_ref
+@ffi.Native<
+  ffi.Int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyCell>)
+>(symbol: 'ghostty_grid_ref_cell')
+external int _ghostty_grid_ref_cell(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<GhosttyCell> out_cell,
+);
+
+GhosttyResult ghostty_grid_ref_cell(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<GhosttyCell> out_cell,
+) => GhosttyResult.fromValue(_ghostty_grid_ref_cell(ref, out_cell));
+
+/// Get the row from a grid reference.
+///
+/// @param ref Pointer to the grid reference
+/// @param[out] out_row On success, set to the row at the ref's position (may be NULL)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
+/// node is NULL
+///
+/// @ingroup grid_ref
+@ffi.Native<
+  ffi.Int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyRow>)
+>(symbol: 'ghostty_grid_ref_row')
+external int _ghostty_grid_ref_row(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<GhosttyRow> out_row,
+);
+
+GhosttyResult ghostty_grid_ref_row(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<GhosttyRow> out_row,
+) => GhosttyResult.fromValue(_ghostty_grid_ref_row(ref, out_row));
+
+/// Get the grapheme cluster codepoints for the cell at the grid reference's
+/// position.
+///
+/// Writes the full grapheme cluster (the cell's primary codepoint followed by
+/// any combining codepoints) into the provided buffer. If the cell has no text,
+/// out_len is set to 0 and GHOSTTY_SUCCESS is returned.
+///
+/// If the buffer is too small (or NULL), the function returns
+/// GHOSTTY_OUT_OF_SPACE and writes the required number of codepoints to
+/// out_len. The caller can then retry with a sufficiently sized buffer.
+///
+/// @param ref Pointer to the grid reference
+/// @param buf Output buffer of uint32_t codepoints (may be NULL)
+/// @param buf_len Number of uint32_t elements in the buffer
+/// @param[out] out_len On success, the number of codepoints written. On
+/// GHOSTTY_OUT_OF_SPACE, the required buffer size in codepoints.
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
+/// node is NULL, GHOSTTY_OUT_OF_SPACE if the buffer is too small
+///
+/// @ingroup grid_ref
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyGridRef>,
+    ffi.Pointer<ffi.Uint32>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_grid_ref_graphemes')
+external int _ghostty_grid_ref_graphemes(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<ffi.Uint32> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_len,
+);
+
+GhosttyResult ghostty_grid_ref_graphemes(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<ffi.Uint32> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_len,
+) => GhosttyResult.fromValue(
+  _ghostty_grid_ref_graphemes(ref, buf, buf_len, out_len),
+);
+
+/// Get the style of the cell at the grid reference's position.
+///
+/// @param ref Pointer to the grid reference
+/// @param[out] out_style On success, set to the cell's style (may be NULL)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the ref's
+/// node is NULL
+///
+/// @ingroup grid_ref
+@ffi.Native<
+  ffi.Int Function(ffi.Pointer<GhosttyGridRef>, ffi.Pointer<GhosttyStyle>)
+>(symbol: 'ghostty_grid_ref_style')
+external int _ghostty_grid_ref_style(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<GhosttyStyle> out_style,
+);
+
+GhosttyResult ghostty_grid_ref_style(
+  ffi.Pointer<GhosttyGridRef> ref,
+  ffi.Pointer<GhosttyStyle> out_style,
+) => GhosttyResult.fromValue(_ghostty_grid_ref_style(ref, out_style));
+
+/// Create a new terminal instance.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param terminal Pointer to store the created terminal handle
+/// @param options Terminal initialization options
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup terminal
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyTerminal>,
+    GhosttyTerminalOptions,
+  )
+>(symbol: 'ghostty_terminal_new')
+external int _ghostty_terminal_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyTerminal> terminal,
+  GhosttyTerminalOptions options,
+);
+
+GhosttyResult ghostty_terminal_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyTerminal> terminal,
+  GhosttyTerminalOptions options,
+) => GhosttyResult.fromValue(
+  _ghostty_terminal_new(allocator, terminal, options),
+);
+
+/// Free a terminal instance.
+///
+/// Releases all resources associated with the terminal. After this call,
+/// the terminal handle becomes invalid and must not be used.
+///
+/// @param terminal The terminal handle to free (may be NULL)
+///
+/// @ingroup terminal
+@ffi.Native<ffi.Void Function(GhosttyTerminal)>()
+external void ghostty_terminal_free(GhosttyTerminal terminal);
+
+/// Perform a full reset of the terminal (RIS).
+///
+/// Resets all terminal state back to its initial configuration, including
+/// modes, scrollback, scrolling region, and screen contents. The terminal
+/// dimensions are preserved.
+///
+/// @param terminal The terminal handle (may be NULL, in which case this is a no-op)
+///
+/// @ingroup terminal
+@ffi.Native<ffi.Void Function(GhosttyTerminal)>()
+external void ghostty_terminal_reset(GhosttyTerminal terminal);
+
+/// Resize the terminal to the given dimensions.
+///
+/// Changes the number of columns and rows in the terminal. The primary
+/// screen will reflow content if wraparound mode is enabled; the alternate
+/// screen does not reflow. If the dimensions are unchanged, this is a no-op.
+///
+/// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param cols New width in cells (must be greater than zero)
+/// @param rows New height in cells (must be greater than zero)
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup terminal
+@ffi.Native<ffi.Int Function(GhosttyTerminal, ffi.Uint16, ffi.Uint16)>(
+  symbol: 'ghostty_terminal_resize',
+)
+external int _ghostty_terminal_resize(
+  GhosttyTerminal terminal,
+  int cols,
+  int rows,
+);
+
+GhosttyResult ghostty_terminal_resize(
+  GhosttyTerminal terminal,
+  int cols,
+  int rows,
+) => GhosttyResult.fromValue(_ghostty_terminal_resize(terminal, cols, rows));
+
+/// Write VT-encoded data to the terminal for processing.
+///
+/// Feeds raw bytes through the terminal's VT stream parser, updating
+/// terminal state accordingly. Only read-only sequences are processed;
+/// sequences that require output (queries) are ignored.
+///
+/// In the future, a callback-based API will be added to allow handling
+/// of output or side effect sequences.
+///
+/// This never fails. Any erroneous input or errors in processing the
+/// input are logged internally but do not cause this function to fail
+/// because this input is assumed to be untrusted and from an external
+/// source; so the primary goal is to keep the terminal state consistent and
+/// not allow malformed input to corrupt or crash.
+///
+/// @param terminal The terminal handle
+/// @param data Pointer to the data to write
+/// @param len Length of the data in bytes
+///
+/// @ingroup terminal
+@ffi.Native<
+  ffi.Void Function(GhosttyTerminal, ffi.Pointer<ffi.Uint8>, ffi.Size)
+>()
+external void ghostty_terminal_vt_write(
+  GhosttyTerminal terminal,
+  ffi.Pointer<ffi.Uint8> data,
+  int len,
+);
+
+/// Scroll the terminal viewport.
+///
+/// Scrolls the terminal's viewport according to the given behavior.
+/// When using GHOSTTY_SCROLL_VIEWPORT_DELTA, set the delta field in
+/// the value union to specify the number of rows to scroll (negative
+/// for up, positive for down). For other behaviors, the value is ignored.
+///
+/// @param terminal The terminal handle (may be NULL, in which case this is a no-op)
+/// @param behavior The scroll behavior as a tagged union
+///
+/// @ingroup terminal
+@ffi.Native<ffi.Void Function(GhosttyTerminal, GhosttyTerminalScrollViewport)>()
+external void ghostty_terminal_scroll_viewport(
+  GhosttyTerminal terminal,
+  GhosttyTerminalScrollViewport behavior,
+);
+
+/// Get the current value of a terminal mode.
+///
+/// Returns the value of the mode identified by the given mode.
+///
+/// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param mode The mode identifying the mode to query
+/// @param[out] out_value On success, set to true if the mode is set, false
+/// if it is reset
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
+/// is NULL or the mode does not correspond to a known mode
+///
+/// @ingroup terminal
+@ffi.Native<
+  ffi.Int Function(GhosttyTerminal, GhosttyMode, ffi.Pointer<ffi.Bool>)
+>(symbol: 'ghostty_terminal_mode_get')
+external int _ghostty_terminal_mode_get(
+  GhosttyTerminal terminal,
+  int mode,
+  ffi.Pointer<ffi.Bool> out_value,
+);
+
+GhosttyResult ghostty_terminal_mode_get(
+  GhosttyTerminal terminal,
+  DartGhosttyMode mode,
+  ffi.Pointer<ffi.Bool> out_value,
+) => GhosttyResult.fromValue(
+  _ghostty_terminal_mode_get(terminal, mode, out_value),
+);
+
+/// Set the value of a terminal mode.
+///
+/// Sets the mode identified by the given mode to the specified value.
+///
+/// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param mode The mode identifying the mode to set
+/// @param value true to set the mode, false to reset it
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
+/// is NULL or the mode does not correspond to a known mode
+///
+/// @ingroup terminal
+@ffi.Native<ffi.Int Function(GhosttyTerminal, GhosttyMode, ffi.Bool)>(
+  symbol: 'ghostty_terminal_mode_set',
+)
+external int _ghostty_terminal_mode_set(
+  GhosttyTerminal terminal,
+  int mode,
+  bool value,
+);
+
+GhosttyResult ghostty_terminal_mode_set(
+  GhosttyTerminal terminal,
+  DartGhosttyMode mode,
+  bool value,
+) => GhosttyResult.fromValue(_ghostty_terminal_mode_set(terminal, mode, value));
+
+/// Get data from a terminal instance.
+///
+/// Extracts typed data from the given terminal based on the specified
+/// data type. The output pointer must be of the appropriate type for the
+/// requested data kind. Valid data types and output types are documented
+/// in the `GhosttyTerminalData` enum.
+///
+/// @param terminal The terminal handle (may be NULL)
+/// @param data The type of data to extract
+/// @param out Pointer to store the extracted data (type depends on data parameter)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
+/// is NULL or the data type is invalid
+///
+/// @ingroup terminal
+@ffi.Native<
+  ffi.Int Function(GhosttyTerminal, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_terminal_get')
+external int _ghostty_terminal_get(
+  GhosttyTerminal terminal,
+  int data,
+  ffi.Pointer<ffi.Void> out,
+);
+
+GhosttyResult ghostty_terminal_get(
+  GhosttyTerminal terminal,
+  GhosttyTerminalData data,
+  ffi.Pointer<ffi.Void> out,
+) => GhosttyResult.fromValue(_ghostty_terminal_get(terminal, data.value, out));
+
+/// Resolve a point in the terminal grid to a grid reference.
+///
+/// Resolves the given point (which can be in active, viewport, screen,
+/// or history coordinates) to a grid reference for that location. Use
+/// ghostty_grid_ref_cell() and ghostty_grid_ref_row() to extract the cell
+/// and row.
+///
+/// Lookups using the `active` and `viewport` tags are fast. The `screen`
+/// and `history` tags may require traversing the full scrollback page list
+/// to resolve the y coordinate, so they can be expensive for large
+/// scrollback buffers.
+///
+/// This function isn't meant to be used as the core of render loop. It
+/// isn't built to sustain the framerates needed for rendering large screens.
+/// Use the render state API for that. This API is instead meant for less
+/// strictly performance-sensitive use cases.
+///
+/// @param terminal The terminal handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param point The point specifying which cell to look up
+/// @param[out] out_ref On success, set to the grid reference at the given point (may be NULL)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if the terminal
+/// is NULL or the point is out of bounds
+///
+/// @ingroup terminal
+@ffi.Native<
+  ffi.Int Function(GhosttyTerminal, GhosttyPoint, ffi.Pointer<GhosttyGridRef>)
+>(symbol: 'ghostty_terminal_grid_ref')
+external int _ghostty_terminal_grid_ref(
+  GhosttyTerminal terminal,
+  GhosttyPoint point,
+  ffi.Pointer<GhosttyGridRef> out_ref,
+);
+
+GhosttyResult ghostty_terminal_grid_ref(
+  GhosttyTerminal terminal,
+  GhosttyPoint point,
+  ffi.Pointer<GhosttyGridRef> out_ref,
+) => GhosttyResult.fromValue(
+  _ghostty_terminal_grid_ref(terminal, point, out_ref),
+);
+
+/// Create a formatter for a terminal's active screen.
+///
+/// The terminal must outlive the formatter. The formatter stores a borrowed
+/// reference to the terminal and reads its current state on each format call.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param formatter Pointer to store the created formatter handle
+/// @param terminal The terminal to format (must not be NULL)
+/// @param options Formatting options
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup formatter
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyFormatter>,
+    GhosttyTerminal,
+    GhosttyFormatterTerminalOptions,
+  )
+>(symbol: 'ghostty_formatter_terminal_new')
+external int _ghostty_formatter_terminal_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyFormatter> formatter,
+  GhosttyTerminal terminal,
+  GhosttyFormatterTerminalOptions options,
+);
+
+GhosttyResult ghostty_formatter_terminal_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyFormatter> formatter,
+  GhosttyTerminal terminal,
+  GhosttyFormatterTerminalOptions options,
+) => GhosttyResult.fromValue(
+  _ghostty_formatter_terminal_new(allocator, formatter, terminal, options),
+);
+
+/// Run the formatter and produce output into the caller-provided buffer.
+///
+/// Each call formats the current terminal state. Pass NULL for buf to
+/// query the required buffer size without writing any output; in that case
+/// out_written receives the required size and the return value is
+/// GHOSTTY_OUT_OF_SPACE.
+///
+/// If the buffer is too small, returns GHOSTTY_OUT_OF_SPACE and sets
+/// out_written to the required size. The caller can then retry with a
+/// larger buffer.
+///
+/// @param formatter The formatter handle (must not be NULL)
+/// @param buf Pointer to the output buffer, or NULL to query size
+/// @param buf_len Length of the output buffer in bytes
+/// @param out_written Pointer to receive the number of bytes written,
+/// or the required size on failure
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup formatter
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyFormatter,
+    ffi.Pointer<ffi.Uint8>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_formatter_format_buf')
+external int _ghostty_formatter_format_buf(
+  GhosttyFormatter formatter,
+  ffi.Pointer<ffi.Uint8> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+);
+
+GhosttyResult ghostty_formatter_format_buf(
+  GhosttyFormatter formatter,
+  ffi.Pointer<ffi.Uint8> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+) => GhosttyResult.fromValue(
+  _ghostty_formatter_format_buf(formatter, buf, buf_len, out_written),
+);
+
+/// Run the formatter and return an allocated buffer with the output.
+///
+/// Each call formats the current terminal state. The buffer is allocated
+/// using the provided allocator (or the default allocator if NULL).
+/// The caller is responsible for freeing the returned buffer. When using
+/// the default allocator (NULL), the buffer can be freed with `free()`.
+/// When using a custom allocator, the buffer must be freed using the
+/// same allocator.
+///
+/// @param formatter The formatter handle (must not be NULL)
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param out_ptr Pointer to receive the allocated buffer
+/// @param out_len Pointer to receive the length of the output in bytes
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
+/// failure
+///
+/// @ingroup formatter
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyFormatter,
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>>,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_formatter_format_alloc')
+external int _ghostty_formatter_format_alloc(
+  GhosttyFormatter formatter,
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<ffi.Pointer<ffi.Uint8>> out_ptr,
+  ffi.Pointer<ffi.Size> out_len,
+);
+
+GhosttyResult ghostty_formatter_format_alloc(
+  GhosttyFormatter formatter,
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<ffi.Pointer<ffi.Uint8>> out_ptr,
+  ffi.Pointer<ffi.Size> out_len,
+) => GhosttyResult.fromValue(
+  _ghostty_formatter_format_alloc(formatter, allocator, out_ptr, out_len),
+);
+
+/// Free a formatter instance.
+///
+/// Releases all resources associated with the formatter. After this call,
+/// the formatter handle becomes invalid.
+///
+/// @param formatter The formatter handle to free (may be NULL)
+///
+/// @ingroup formatter
+@ffi.Native<ffi.Void Function(GhosttyFormatter)>()
+external void ghostty_formatter_free(GhosttyFormatter formatter);
+
+/// Create a new render state instance.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param state Pointer to store the created render state handle
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
+/// failure
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyRenderState>,
+  )
+>(symbol: 'ghostty_render_state_new')
+external int _ghostty_render_state_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyRenderState> state,
+);
+
+GhosttyResult ghostty_render_state_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyRenderState> state,
+) => GhosttyResult.fromValue(_ghostty_render_state_new(allocator, state));
+
+/// Free a render state instance.
+///
+/// Releases all resources associated with the render state. After this call,
+/// the render state handle becomes invalid.
+///
+/// @param state The render state handle to free (may be NULL)
+///
+/// @ingroup render
+@ffi.Native<ffi.Void Function(GhosttyRenderState)>()
+external void ghostty_render_state_free(GhosttyRenderState state);
+
+/// Update a render state instance from a terminal.
+///
+/// This consumes terminal/screen dirty state in the same way as the internal
+/// render state update path.
+///
+/// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param terminal The terminal handle to read from (NULL returns GHOSTTY_INVALID_VALUE)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` or
+/// `terminal` is NULL, GHOSTTY_OUT_OF_MEMORY if updating the state requires
+/// allocation and that allocation fails
+///
+/// @ingroup render
+@ffi.Native<ffi.Int Function(GhosttyRenderState, GhosttyTerminal)>(
+  symbol: 'ghostty_render_state_update',
+)
+external int _ghostty_render_state_update(
+  GhosttyRenderState state,
+  GhosttyTerminal terminal,
+);
+
+GhosttyResult ghostty_render_state_update(
+  GhosttyRenderState state,
+  GhosttyTerminal terminal,
+) => GhosttyResult.fromValue(_ghostty_render_state_update(state, terminal));
+
+/// Get a value from a render state.
+///
+/// The `out` pointer must point to a value of the type corresponding to the
+/// requested data kind (see GhosttyRenderStateData).
+///
+/// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param data The data kind to query
+/// @param[out] out Pointer to receive the queried value
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` is
+/// NULL or `data` is not a recognized enum value
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(GhosttyRenderState, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_render_state_get')
+external int _ghostty_render_state_get(
+  GhosttyRenderState state,
+  int data,
+  ffi.Pointer<ffi.Void> out,
+);
+
+GhosttyResult ghostty_render_state_get(
+  GhosttyRenderState state,
+  GhosttyRenderStateData data,
+  ffi.Pointer<ffi.Void> out,
+) => GhosttyResult.fromValue(_ghostty_render_state_get(state, data.value, out));
+
+/// Set an option on a render state.
+///
+/// The `value` pointer must point to a value of the type corresponding to the
+/// requested option kind (see GhosttyRenderStateOption).
+///
+/// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param option The option to set
+/// @param[in] value Pointer to the value to set (NULL returns
+/// GHOSTTY_INVALID_VALUE)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` or
+/// `value` is NULL
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(GhosttyRenderState, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_render_state_set')
+external int _ghostty_render_state_set(
+  GhosttyRenderState state,
+  int option,
+  ffi.Pointer<ffi.Void> value,
+);
+
+GhosttyResult ghostty_render_state_set(
+  GhosttyRenderState state,
+  GhosttyRenderStateOption option,
+  ffi.Pointer<ffi.Void> value,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_set(state, option.value, value),
+);
+
+/// Get the current color information from a render state.
+///
+/// This writes as many fields as fit in the caller-provided sized struct.
+/// `out_colors->size` must be set by the caller (typically via
+/// GHOSTTY_INIT_SIZED(GhosttyRenderStateColors)).
+///
+/// @param state The render state handle (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param[out] out_colors Sized output struct to receive render-state colors
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `state` or
+/// `out_colors` is NULL, or if `out_colors->size` is smaller than
+/// `sizeof(size_t)`
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(GhosttyRenderState, ffi.Pointer<GhosttyRenderStateColors>)
+>(symbol: 'ghostty_render_state_colors_get')
+external int _ghostty_render_state_colors_get(
+  GhosttyRenderState state,
+  ffi.Pointer<GhosttyRenderStateColors> out_colors,
+);
+
+GhosttyResult ghostty_render_state_colors_get(
+  GhosttyRenderState state,
+  ffi.Pointer<GhosttyRenderStateColors> out_colors,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_colors_get(state, out_colors),
+);
+
+/// Create a new row iterator instance.
+///
+/// All fields except the allocator are left undefined until populated
+/// via ghostty_render_state_get() with
+/// GHOSTTY_RENDER_STATE_DATA_ROW_ITERATOR.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param[out] out_iterator On success, receives the created iterator handle
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
+/// failure
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyRenderStateRowIterator>,
+  )
+>(symbol: 'ghostty_render_state_row_iterator_new')
+external int _ghostty_render_state_row_iterator_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyRenderStateRowIterator> out_iterator,
+);
+
+GhosttyResult ghostty_render_state_row_iterator_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyRenderStateRowIterator> out_iterator,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_row_iterator_new(allocator, out_iterator),
+);
+
+/// Free a render-state row iterator.
+///
+/// @param iterator The iterator handle to free (may be NULL)
+///
+/// @ingroup render
+@ffi.Native<ffi.Void Function(GhosttyRenderStateRowIterator)>()
+external void ghostty_render_state_row_iterator_free(
+  GhosttyRenderStateRowIterator iterator,
+);
+
+/// Move a render-state row iterator to the next row.
+///
+/// Returns true if the iterator moved successfully and row data is
+/// available to read at the new position.
+///
+/// @param iterator The iterator handle to advance (may be NULL)
+/// @return true if advanced to the next row, false if `iterator` is
+/// NULL or if the iterator has reached the end
+///
+/// @ingroup render
+@ffi.Native<ffi.Bool Function(GhosttyRenderStateRowIterator)>()
+external bool ghostty_render_state_row_iterator_next(
+  GhosttyRenderStateRowIterator iterator,
+);
+
+/// Get a value from the current row in a render-state row iterator.
+///
+/// The `out` pointer must point to a value of the type corresponding to the
+/// requested data kind (see GhosttyRenderStateRowData).
+/// Call ghostty_render_state_row_iterator_next() at least once before
+/// calling this function.
+///
+/// @param iterator The iterator handle to query (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param data The data kind to query
+/// @param[out] out Pointer to receive the queried value
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if
+/// `iterator` is NULL or the iterator is not positioned on a row
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyRenderStateRowIterator,
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Void>,
+  )
+>(symbol: 'ghostty_render_state_row_get')
+external int _ghostty_render_state_row_get(
+  GhosttyRenderStateRowIterator iterator,
+  int data,
+  ffi.Pointer<ffi.Void> out,
+);
+
+GhosttyResult ghostty_render_state_row_get(
+  GhosttyRenderStateRowIterator iterator,
+  GhosttyRenderStateRowData data,
+  ffi.Pointer<ffi.Void> out,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_row_get(iterator, data.value, out),
+);
+
+/// Set an option on the current row in a render-state row iterator.
+///
+/// The `value` pointer must point to a value of the type corresponding to the
+/// requested option kind (see GhosttyRenderStateRowOption).
+/// Call ghostty_render_state_row_iterator_next() at least once before
+/// calling this function.
+///
+/// @param iterator The iterator handle to update (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param option The option to set
+/// @param[in] value Pointer to the value to set (NULL returns
+/// GHOSTTY_INVALID_VALUE)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if
+/// `iterator` is NULL or the iterator is not positioned on a row
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyRenderStateRowIterator,
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Void>,
+  )
+>(symbol: 'ghostty_render_state_row_set')
+external int _ghostty_render_state_row_set(
+  GhosttyRenderStateRowIterator iterator,
+  int option,
+  ffi.Pointer<ffi.Void> value,
+);
+
+GhosttyResult ghostty_render_state_row_set(
+  GhosttyRenderStateRowIterator iterator,
+  GhosttyRenderStateRowOption option,
+  ffi.Pointer<ffi.Void> value,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_row_set(iterator, option.value, value),
+);
+
+/// Create a new row cells instance.
+///
+/// All fields except the allocator are left undefined until populated
+/// via ghostty_render_state_row_get() with
+/// GHOSTTY_RENDER_STATE_ROW_DATA_CELLS.
+///
+/// You can reuse this value repeatedly with ghostty_render_state_row_get() to
+/// avoid allocating a new cells container for every row.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param[out] out_cells On success, receives the created row cells handle
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_MEMORY on allocation
+/// failure
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyRenderStateRowCells>,
+  )
+>(symbol: 'ghostty_render_state_row_cells_new')
+external int _ghostty_render_state_row_cells_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyRenderStateRowCells> out_cells,
+);
+
+GhosttyResult ghostty_render_state_row_cells_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyRenderStateRowCells> out_cells,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_row_cells_new(allocator, out_cells),
+);
+
+/// Move a render-state row cells iterator to the next cell.
+///
+/// Returns true if the iterator moved successfully and cell data is
+/// available to read at the new position.
+///
+/// @param cells The row cells handle to advance (may be NULL)
+/// @return true if advanced to the next cell, false if `cells` is
+/// NULL or if the iterator has reached the end
+///
+/// @ingroup render
+@ffi.Native<ffi.Bool Function(GhosttyRenderStateRowCells)>()
+external bool ghostty_render_state_row_cells_next(
+  GhosttyRenderStateRowCells cells,
+);
+
+/// Move a render-state row cells iterator to a specific column.
+///
+/// Positions the iterator at the given x (column) index so that
+/// subsequent reads return data for that cell.
+///
+/// @param cells The row cells handle to reposition (NULL returns
+/// GHOSTTY_INVALID_VALUE)
+/// @param x The zero-based column index to select
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if `cells`
+/// is NULL or `x` is out of range
+///
+/// @ingroup render
+@ffi.Native<ffi.Int Function(GhosttyRenderStateRowCells, ffi.Uint16)>(
+  symbol: 'ghostty_render_state_row_cells_select',
+)
+external int _ghostty_render_state_row_cells_select(
+  GhosttyRenderStateRowCells cells,
+  int x,
+);
+
+GhosttyResult ghostty_render_state_row_cells_select(
+  GhosttyRenderStateRowCells cells,
+  int x,
+) => GhosttyResult.fromValue(_ghostty_render_state_row_cells_select(cells, x));
+
+/// Get a value from the current cell in a render-state row cells iterator.
+///
+/// The `out` pointer must point to a value of the type corresponding to the
+/// requested data kind (see GhosttyRenderStateRowCellsData).
+/// Call ghostty_render_state_row_cells_next() or
+/// ghostty_render_state_row_cells_select() at least once before
+/// calling this function.
+///
+/// @param cells The row cells handle to query (NULL returns GHOSTTY_INVALID_VALUE)
+/// @param data The data kind to query
+/// @param[out] out Pointer to receive the queried value
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_INVALID_VALUE if
+/// `cells` is NULL or the iterator is not positioned on a cell
+///
+/// @ingroup render
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyRenderStateRowCells,
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Void>,
+  )
+>(symbol: 'ghostty_render_state_row_cells_get')
+external int _ghostty_render_state_row_cells_get(
+  GhosttyRenderStateRowCells cells,
+  int data,
+  ffi.Pointer<ffi.Void> out,
+);
+
+GhosttyResult ghostty_render_state_row_cells_get(
+  GhosttyRenderStateRowCells cells,
+  GhosttyRenderStateRowCellsData data,
+  ffi.Pointer<ffi.Void> out,
+) => GhosttyResult.fromValue(
+  _ghostty_render_state_row_cells_get(cells, data.value, out),
+);
+
+/// Free a row cells instance.
+///
+/// @param cells The row cells handle to free (may be NULL)
+///
+/// @ingroup render
+@ffi.Native<ffi.Void Function(GhosttyRenderStateRowCells)>()
+external void ghostty_render_state_row_cells_free(
+  GhosttyRenderStateRowCells cells,
+);
+
+/// Create a new OSC parser instance.
+///
+/// Creates a new OSC (Operating System Command) parser using the provided
+/// allocator. The parser must be freed using ghostty_vt_osc_free() when
+/// no longer needed.
+///
+/// @param allocator Pointer to the allocator to use for memory management, or NULL to use the default allocator
+/// @param parser Pointer to store the created parser handle
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup osc
+@ffi.Native<
+  ffi.Int Function(ffi.Pointer<GhosttyAllocator>, ffi.Pointer<GhosttyOscParser>)
+>(symbol: 'ghostty_osc_new')
+external int _ghostty_osc_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyOscParser> parser,
+);
+
+GhosttyResult ghostty_osc_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyOscParser> parser,
+) => GhosttyResult.fromValue(_ghostty_osc_new(allocator, parser));
+
+/// Free an OSC parser instance.
+///
+/// Releases all resources associated with the OSC parser. After this call,
+/// the parser handle becomes invalid and must not be used.
+///
+/// @param parser The parser handle to free (may be NULL)
+///
+/// @ingroup osc
+@ffi.Native<ffi.Void Function(GhosttyOscParser)>()
+external void ghostty_osc_free(GhosttyOscParser parser);
+
+/// Reset an OSC parser instance to its initial state.
+///
+/// Resets the parser state, clearing any partially parsed OSC sequences
+/// and returning the parser to its initial state. This is useful for
+/// reusing a parser instance or recovering from parse errors.
+///
+/// @param parser The parser handle to reset, must not be null.
+///
+/// @ingroup osc
+@ffi.Native<ffi.Void Function(GhosttyOscParser)>()
+external void ghostty_osc_reset(GhosttyOscParser parser);
+
+/// Parse the next byte in an OSC sequence.
+///
+/// Processes a single byte as part of an OSC sequence. The parser maintains
+/// internal state to track the progress through the sequence. Call this
+/// function for each byte in the sequence data.
+///
+/// When finished pumping the parser with bytes, call ghostty_osc_end
+/// to get the final result.
+///
+/// @param parser The parser handle, must not be null.
+/// @param byte The next byte to parse
+///
+/// @ingroup osc
+@ffi.Native<ffi.Void Function(GhosttyOscParser, ffi.Uint8)>()
+external void ghostty_osc_next(GhosttyOscParser parser, int byte);
+
+/// Finalize OSC parsing and retrieve the parsed command.
+///
+/// Call this function after feeding all bytes of an OSC sequence to the parser
+/// using ghostty_osc_next() with the exception of the terminating character
+/// (ESC or ST). This function finalizes the parsing process and returns the
+/// parsed OSC command.
+///
+/// The return value is never NULL. Invalid commands will return a command
+/// with type GHOSTTY_OSC_COMMAND_INVALID.
+///
+/// The terminator parameter specifies the byte that terminated the OSC sequence
+/// (typically 0x07 for BEL or 0x5C for ST after ESC). This information is
+/// preserved in the parsed command so that responses can use the same terminator
+/// format for better compatibility with the calling program. For commands that
+/// do not require a response, this parameter is ignored and the resulting
+/// command will not retain the terminator information.
+///
+/// The returned command handle is valid until the next call to any
+/// `ghostty_osc_*` function with the same parser instance with the exception
+/// of command introspection functions such as `ghostty_osc_command_type`.
+///
+/// @param parser The parser handle, must not be null.
+/// @param terminator The terminating byte of the OSC sequence (0x07 for BEL, 0x5C for ST)
+/// @return Handle to the parsed OSC command
+///
+/// @ingroup osc
+@ffi.Native<GhosttyOscCommand Function(GhosttyOscParser, ffi.Uint8)>()
+external GhosttyOscCommand ghostty_osc_end(
+  GhosttyOscParser parser,
+  int terminator,
+);
+
+/// Get the type of an OSC command.
+///
+/// Returns the type identifier for the given OSC command. This can be used
+/// to determine what kind of command was parsed and what data might be
+/// available from it.
+///
+/// @param command The OSC command handle to query (may be NULL)
+/// @return The command type, or GHOSTTY_OSC_COMMAND_INVALID if command is NULL
+///
+/// @ingroup osc
+@ffi.Native<ffi.UnsignedInt Function(GhosttyOscCommand)>(
+  symbol: 'ghostty_osc_command_type',
+)
+external int _ghostty_osc_command_type(GhosttyOscCommand command);
+
+GhosttyOscCommandType ghostty_osc_command_type(GhosttyOscCommand command) =>
+    GhosttyOscCommandType.fromValue(_ghostty_osc_command_type(command));
+
+/// Extract data from an OSC command.
+///
+/// Extracts typed data from the given OSC command based on the specified
+/// data type. The output pointer must be of the appropriate type for the
+/// requested data kind. Valid command types, output types, and memory
+/// safety information are documented in the `GhosttyOscCommandData` enum.
+///
+/// @param command The OSC command handle to query (may be NULL)
+/// @param data The type of data to extract
+/// @param out Pointer to store the extracted data (type depends on data parameter)
+/// @return true if data extraction was successful, false otherwise
+///
+/// @ingroup osc
+@ffi.Native<
+  ffi.Bool Function(GhosttyOscCommand, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_osc_command_data')
+external bool _ghostty_osc_command_data(
+  GhosttyOscCommand command,
+  int data,
+  ffi.Pointer<ffi.Void> out,
+);
+
+bool ghostty_osc_command_data(
+  GhosttyOscCommand command,
+  GhosttyOscCommandData data,
+  ffi.Pointer<ffi.Void> out,
+) => _ghostty_osc_command_data(command, data.value, out);
+
+/// Create a new SGR parser instance.
+///
+/// Creates a new SGR (Select Graphic Rendition) parser using the provided
+/// allocator. The parser must be freed using ghostty_sgr_free() when
+/// no longer needed.
+///
+/// @param allocator Pointer to the allocator to use for memory management, or
+/// NULL to use the default allocator
+/// @param parser Pointer to store the created parser handle
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Int Function(ffi.Pointer<GhosttyAllocator>, ffi.Pointer<GhosttySgrParser>)
+>(symbol: 'ghostty_sgr_new')
+external int _ghostty_sgr_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttySgrParser> parser,
+);
+
+GhosttyResult ghostty_sgr_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttySgrParser> parser,
+) => GhosttyResult.fromValue(_ghostty_sgr_new(allocator, parser));
+
+/// Free an SGR parser instance.
+///
+/// Releases all resources associated with the SGR parser. After this call,
+/// the parser handle becomes invalid and must not be used. This includes
+/// any attributes previously returned by ghostty_sgr_next().
+///
+/// @param parser The parser handle to free (may be NULL)
+///
+/// @ingroup sgr
+@ffi.Native<ffi.Void Function(GhosttySgrParser)>()
+external void ghostty_sgr_free(GhosttySgrParser parser);
+
+/// Reset an SGR parser instance to the beginning of the parameter list.
+///
+/// Resets the parser's iteration state without clearing the parameters.
+/// After calling this, ghostty_sgr_next() will start from the beginning
+/// of the parameter list again.
+///
+/// @param parser The parser handle to reset, must not be NULL
+///
+/// @ingroup sgr
+@ffi.Native<ffi.Void Function(GhosttySgrParser)>()
+external void ghostty_sgr_reset(GhosttySgrParser parser);
+
+/// Set SGR parameters for parsing.
+///
+/// Sets the SGR parameter list to parse. Parameters are the numeric values
+/// from a CSI SGR sequence (e.g., for `ESC[1;31m`, params would be {1, 31}).
+///
+/// The separators array optionally specifies the separator type for each
+/// parameter position. Each byte should be either ';' for semicolon or ':'
+/// for colon. This is needed for certain color formats that use colon
+/// separators (e.g., `ESC[4:3m` for curly underline). Any invalid separator
+/// values are treated as semicolons. The separators array must have the same
+/// length as the params array, if it is not NULL.
+///
+/// If separators is NULL, all parameters are assumed to be semicolon-separated.
+///
+/// This function makes an internal copy of the parameter and separator data,
+/// so the caller can safely free or modify the input arrays after this call.
+///
+/// After calling this function, the parser is automatically reset and ready
+/// to iterate from the beginning.
+///
+/// @param parser The parser handle, must not be NULL
+/// @param params Array of SGR parameter values
+/// @param separators Optional array of separator characters (';' or ':'), or
+/// NULL
+/// @param len Number of parameters (and separators if provided)
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Int Function(
+    GhosttySgrParser,
+    ffi.Pointer<ffi.Uint16>,
+    ffi.Pointer<ffi.Char>,
+    ffi.Size,
+  )
+>(symbol: 'ghostty_sgr_set_params')
+external int _ghostty_sgr_set_params(
+  GhosttySgrParser parser,
+  ffi.Pointer<ffi.Uint16> params,
+  ffi.Pointer<ffi.Char> separators,
+  int len,
+);
+
+GhosttyResult ghostty_sgr_set_params(
+  GhosttySgrParser parser,
+  ffi.Pointer<ffi.Uint16> params,
+  ffi.Pointer<ffi.Char> separators,
+  int len,
+) => GhosttyResult.fromValue(
+  _ghostty_sgr_set_params(parser, params, separators, len),
+);
+
+/// Get the next SGR attribute.
+///
+/// Parses and returns the next attribute from the parameter list.
+/// Call this function repeatedly until it returns false to process
+/// all attributes in the sequence.
+///
+/// @param parser The parser handle, must not be NULL
+/// @param attr Pointer to store the next attribute
+/// @return true if an attribute was returned, false if no more attributes
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Bool Function(GhosttySgrParser, ffi.Pointer<GhosttySgrAttribute>)
+>()
+external bool ghostty_sgr_next(
+  GhosttySgrParser parser,
+  ffi.Pointer<GhosttySgrAttribute> attr,
+);
+
+/// Get the full parameter list from an unknown SGR attribute.
+///
+/// This function retrieves the full parameter list that was provided to the
+/// parser when an unknown attribute was encountered. Primarily useful in
+/// WebAssembly environments where accessing struct fields directly is difficult.
+///
+/// @param unknown The unknown attribute data
+/// @param ptr Pointer to store the pointer to the parameter array (may be NULL)
+/// @return The length of the full parameter array
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Size Function(GhosttySgrUnknown, ffi.Pointer<ffi.Pointer<ffi.Uint16>>)
+>()
+external int ghostty_sgr_unknown_full(
+  GhosttySgrUnknown unknown,
+  ffi.Pointer<ffi.Pointer<ffi.Uint16>> ptr,
+);
+
+/// Get the partial parameter list from an unknown SGR attribute.
+///
+/// This function retrieves the partial parameter list where parsing stopped
+/// when an unknown attribute was encountered. Primarily useful in WebAssembly
+/// environments where accessing struct fields directly is difficult.
+///
+/// @param unknown The unknown attribute data
+/// @param ptr Pointer to store the pointer to the parameter array (may be NULL)
+/// @return The length of the partial parameter array
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Size Function(GhosttySgrUnknown, ffi.Pointer<ffi.Pointer<ffi.Uint16>>)
+>()
+external int ghostty_sgr_unknown_partial(
+  GhosttySgrUnknown unknown,
+  ffi.Pointer<ffi.Pointer<ffi.Uint16>> ptr,
+);
+
+/// Get the tag from an SGR attribute.
+///
+/// This function extracts the tag that identifies which type of attribute
+/// this is. Primarily useful in WebAssembly environments where accessing
+/// struct fields directly is difficult.
+///
+/// @param attr The SGR attribute
+/// @return The attribute tag
+///
+/// @ingroup sgr
+@ffi.Native<ffi.UnsignedInt Function(GhosttySgrAttribute)>(
+  symbol: 'ghostty_sgr_attribute_tag',
+)
+external int _ghostty_sgr_attribute_tag(GhosttySgrAttribute attr);
+
+GhosttySgrAttributeTag ghostty_sgr_attribute_tag(GhosttySgrAttribute attr) =>
+    GhosttySgrAttributeTag.fromValue(_ghostty_sgr_attribute_tag(attr));
+
+/// Get the value from an SGR attribute.
+///
+/// This function returns a pointer to the value union from an SGR attribute. Use
+/// the tag to determine which field of the union is valid. Primarily useful in
+/// WebAssembly environments where accessing struct fields directly is difficult.
+///
+/// @param attr Pointer to the SGR attribute
+/// @return Pointer to the attribute value union
+///
+/// @ingroup sgr
+@ffi.Native<
+  ffi.Pointer<GhosttySgrAttributeValue> Function(
+    ffi.Pointer<GhosttySgrAttribute>,
+  )
+>()
+external ffi.Pointer<GhosttySgrAttributeValue> ghostty_sgr_attribute_value(
+  ffi.Pointer<GhosttySgrAttribute> attr,
+);
+
+/// Create a new key event instance.
+///
+/// Creates a new key event with default values. The event must be freed using
+/// ghostty_key_event_free() when no longer needed.
+///
+/// @param allocator Pointer to the allocator to use for memory management, or NULL to use the default allocator
+/// @param event Pointer to store the created key event handle
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup key
+@ffi.Native<
+  ffi.Int Function(ffi.Pointer<GhosttyAllocator>, ffi.Pointer<GhosttyKeyEvent>)
+>(symbol: 'ghostty_key_event_new')
+external int _ghostty_key_event_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyKeyEvent> event,
+);
+
+GhosttyResult ghostty_key_event_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyKeyEvent> event,
+) => GhosttyResult.fromValue(_ghostty_key_event_new(allocator, event));
+
+/// Free a key event instance.
+///
+/// Releases all resources associated with the key event. After this call,
+/// the event handle becomes invalid and must not be used.
+///
+/// @param event The key event handle to free (may be NULL)
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent)>()
+external void ghostty_key_event_free(GhosttyKeyEvent event);
+
+/// Set the key action (press, release, repeat).
+///
+/// @param event The key event handle, must not be NULL
+/// @param action The action to set
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent, ffi.UnsignedInt)>(
+  symbol: 'ghostty_key_event_set_action',
+)
+external void _ghostty_key_event_set_action(GhosttyKeyEvent event, int action);
+
+void ghostty_key_event_set_action(
+  GhosttyKeyEvent event,
+  GhosttyKeyAction action,
+) => _ghostty_key_event_set_action(event, action.value);
+
+/// Get the key action (press, release, repeat).
+///
+/// @param event The key event handle, must not be NULL
+/// @return The key action
+///
+/// @ingroup key
+@ffi.Native<ffi.UnsignedInt Function(GhosttyKeyEvent)>(
+  symbol: 'ghostty_key_event_get_action',
+)
+external int _ghostty_key_event_get_action(GhosttyKeyEvent event);
+
+GhosttyKeyAction ghostty_key_event_get_action(GhosttyKeyEvent event) =>
+    GhosttyKeyAction.fromValue(_ghostty_key_event_get_action(event));
+
+/// Set the physical key code.
+///
+/// @param event The key event handle, must not be NULL
+/// @param key The physical key code to set
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent, ffi.UnsignedInt)>(
+  symbol: 'ghostty_key_event_set_key',
+)
+external void _ghostty_key_event_set_key(GhosttyKeyEvent event, int key);
+
+void ghostty_key_event_set_key(GhosttyKeyEvent event, GhosttyKey key) =>
+    _ghostty_key_event_set_key(event, key.value);
+
+/// Get the physical key code.
+///
+/// @param event The key event handle, must not be NULL
+/// @return The physical key code
+///
+/// @ingroup key
+@ffi.Native<ffi.UnsignedInt Function(GhosttyKeyEvent)>(
+  symbol: 'ghostty_key_event_get_key',
+)
+external int _ghostty_key_event_get_key(GhosttyKeyEvent event);
+
+GhosttyKey ghostty_key_event_get_key(GhosttyKeyEvent event) =>
+    GhosttyKey.fromValue(_ghostty_key_event_get_key(event));
+
+/// Set the modifier keys bitmask.
+///
+/// @param event The key event handle, must not be NULL
+/// @param mods The modifier keys bitmask to set
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent, GhosttyMods)>()
+external void ghostty_key_event_set_mods(GhosttyKeyEvent event, int mods);
+
+/// Get the modifier keys bitmask.
+///
+/// @param event The key event handle, must not be NULL
+/// @return The modifier keys bitmask
+///
+/// @ingroup key
+@ffi.Native<GhosttyMods Function(GhosttyKeyEvent)>()
+external int ghostty_key_event_get_mods(GhosttyKeyEvent event);
+
+/// Set the consumed modifiers bitmask.
+///
+/// @param event The key event handle, must not be NULL
+/// @param consumed_mods The consumed modifiers bitmask to set
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent, GhosttyMods)>()
+external void ghostty_key_event_set_consumed_mods(
+  GhosttyKeyEvent event,
+  int consumed_mods,
+);
+
+/// Get the consumed modifiers bitmask.
+///
+/// @param event The key event handle, must not be NULL
+/// @return The consumed modifiers bitmask
+///
+/// @ingroup key
+@ffi.Native<GhosttyMods Function(GhosttyKeyEvent)>()
+external int ghostty_key_event_get_consumed_mods(GhosttyKeyEvent event);
+
+/// Set whether the key event is part of a composition sequence.
+///
+/// @param event The key event handle, must not be NULL
+/// @param composing Whether the key event is part of a composition sequence
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent, ffi.Bool)>()
+external void ghostty_key_event_set_composing(
+  GhosttyKeyEvent event,
+  bool composing,
+);
+
+/// Get whether the key event is part of a composition sequence.
+///
+/// @param event The key event handle, must not be NULL
+/// @return Whether the key event is part of a composition sequence
+///
+/// @ingroup key
+@ffi.Native<ffi.Bool Function(GhosttyKeyEvent)>()
+external bool ghostty_key_event_get_composing(GhosttyKeyEvent event);
+
+/// Set the UTF-8 text generated by the key event.
+///
+/// The key event does NOT take ownership of the text pointer. The caller
+/// must ensure the string remains valid for the lifetime needed by the event.
+///
+/// @param event The key event handle, must not be NULL
+/// @param utf8 The UTF-8 text to set (or NULL for empty)
+/// @param len Length of the UTF-8 text in bytes
+///
+/// @ingroup key
+@ffi.Native<
+  ffi.Void Function(GhosttyKeyEvent, ffi.Pointer<ffi.Char>, ffi.Size)
+>()
+external void ghostty_key_event_set_utf8(
+  GhosttyKeyEvent event,
+  ffi.Pointer<ffi.Char> utf8,
+  int len,
+);
+
+/// Get the UTF-8 text generated by the key event.
+///
+/// The returned pointer is valid until the event is freed or the UTF-8 text is modified.
+///
+/// @param event The key event handle, must not be NULL
+/// @param len Pointer to store the length of the UTF-8 text in bytes (may be NULL)
+/// @return The UTF-8 text (or NULL for empty)
+///
+/// @ingroup key
+@ffi.Native<
+  ffi.Pointer<ffi.Char> Function(GhosttyKeyEvent, ffi.Pointer<ffi.Size>)
+>()
+external ffi.Pointer<ffi.Char> ghostty_key_event_get_utf8(
+  GhosttyKeyEvent event,
+  ffi.Pointer<ffi.Size> len,
+);
+
+/// Set the unshifted Unicode codepoint.
+///
+/// @param event The key event handle, must not be NULL
+/// @param codepoint The unshifted Unicode codepoint to set
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEvent, ffi.Uint32)>()
+external void ghostty_key_event_set_unshifted_codepoint(
+  GhosttyKeyEvent event,
+  int codepoint,
+);
+
+/// Get the unshifted Unicode codepoint.
+///
+/// @param event The key event handle, must not be NULL
+/// @return The unshifted Unicode codepoint
+///
+/// @ingroup key
+@ffi.Native<ffi.Uint32 Function(GhosttyKeyEvent)>()
+external int ghostty_key_event_get_unshifted_codepoint(GhosttyKeyEvent event);
+
+/// Create a new key encoder instance.
+///
+/// Creates a new key encoder with default options. The encoder can be configured
+/// using ghostty_key_encoder_setopt() and must be freed using
+/// ghostty_key_encoder_free() when no longer needed.
+///
+/// @param allocator Pointer to the allocator to use for memory management, or NULL to use the default allocator
+/// @param encoder Pointer to store the created encoder handle
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup key
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyKeyEncoder>,
+  )
+>(symbol: 'ghostty_key_encoder_new')
+external int _ghostty_key_encoder_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyKeyEncoder> encoder,
+);
+
+GhosttyResult ghostty_key_encoder_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyKeyEncoder> encoder,
+) => GhosttyResult.fromValue(_ghostty_key_encoder_new(allocator, encoder));
+
+/// Free a key encoder instance.
+///
+/// Releases all resources associated with the key encoder. After this call,
+/// the encoder handle becomes invalid and must not be used.
+///
+/// @param encoder The encoder handle to free (may be NULL)
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEncoder)>()
+external void ghostty_key_encoder_free(GhosttyKeyEncoder encoder);
+
+/// Set an option on the key encoder.
+///
+/// Configures the behavior of the key encoder. Options control various aspects
+/// of encoding such as terminal modes (cursor key application mode, keypad mode),
+/// protocol selection (Kitty keyboard protocol flags), and platform-specific
+/// behaviors (macOS option-as-alt).
+///
+/// If you are using a terminal instance, you can set the key encoding
+/// options based on the active terminal state (e.g. legacy vs Kitty mode
+/// and associated flags) with ghostty_key_encoder_setopt_from_terminal().
+///
+/// A null pointer value does nothing. It does not reset the value to the
+/// default. The setopt call will do nothing.
+///
+/// @param encoder The encoder handle, must not be NULL
+/// @param option The option to set
+/// @param value Pointer to the value to set (type depends on the option)
+///
+/// @ingroup key
+@ffi.Native<
+  ffi.Void Function(GhosttyKeyEncoder, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_key_encoder_setopt')
+external void _ghostty_key_encoder_setopt(
+  GhosttyKeyEncoder encoder,
+  int option,
+  ffi.Pointer<ffi.Void> value,
+);
+
+void ghostty_key_encoder_setopt(
+  GhosttyKeyEncoder encoder,
+  GhosttyKeyEncoderOption option,
+  ffi.Pointer<ffi.Void> value,
+) => _ghostty_key_encoder_setopt(encoder, option.value, value);
+
+/// Set encoder options from a terminal's current state.
+///
+/// Reads the terminal's current modes and flags and applies them to the
+/// encoder's options. This sets cursor key application mode, keypad mode,
+/// alt escape prefix, modifyOtherKeys state, and Kitty keyboard protocol
+/// flags from the terminal state.
+///
+/// Note that the `macos_option_as_alt` option cannot be determined from
+/// terminal state and is reset to `GHOSTTY_OPTION_AS_ALT_FALSE` by this
+/// call. Use ghostty_key_encoder_setopt() to set it afterward if needed.
+///
+/// @param encoder The encoder handle, must not be NULL
+/// @param terminal The terminal handle, must not be NULL
+///
+/// @ingroup key
+@ffi.Native<ffi.Void Function(GhosttyKeyEncoder, GhosttyTerminal)>()
+external void ghostty_key_encoder_setopt_from_terminal(
+  GhosttyKeyEncoder encoder,
+  GhosttyTerminal terminal,
+);
+
+/// Encode a key event into a terminal escape sequence.
+///
+/// Converts a key event into the appropriate terminal escape sequence based on
+/// the encoder's current options. The sequence is written to the provided buffer.
+///
+/// Not all key events produce output. For example, unmodified modifier keys
+/// typically don't generate escape sequences. Check the out_len parameter to
+/// determine if any data was written.
+///
+/// If the output buffer is too small, this function returns GHOSTTY_OUT_OF_SPACE
+/// and out_len will contain the required buffer size. The caller can then
+/// allocate a larger buffer and call the function again.
+///
+/// @param encoder The encoder handle, must not be NULL
+/// @param event The key event to encode, must not be NULL
+/// @param out_buf Buffer to write the encoded sequence to
+/// @param out_buf_size Size of the output buffer in bytes
+/// @param out_len Pointer to store the number of bytes written (may be NULL)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if buffer too small, or other error code
+///
+/// ## Example: Calculate required buffer size
+///
+/// @code{.c}
+/// // Query the required size with a NULL buffer (always returns OUT_OF_SPACE)
+/// size_t required = 0;
+/// GhosttyResult result = ghostty_key_encoder_encode(encoder, event, NULL, 0, &required);
+/// assert(result == GHOSTTY_OUT_OF_SPACE);
+///
+/// // Allocate buffer of required size
+/// char *buf = malloc(required);
+///
+/// // Encode with properly sized buffer
+/// size_t written = 0;
+/// result = ghostty_key_encoder_encode(encoder, event, buf, required, &written);
+/// assert(result == GHOSTTY_SUCCESS);
+///
+/// // Use the encoded sequence...
+///
+/// free(buf);
+/// @endcode
+///
+/// ## Example: Direct encoding with static buffer
+///
+/// @code{.c}
+/// // Most escape sequences are short, so a static buffer often suffices
+/// char buf[128];
+/// size_t written = 0;
+/// GhosttyResult result = ghostty_key_encoder_encode(encoder, event, buf, sizeof(buf), &written);
+///
+/// if (result == GHOSTTY_SUCCESS) {
+/// // Write the encoded sequence to the terminal
+/// write(pty_fd, buf, written);
+/// } else if (result == GHOSTTY_OUT_OF_SPACE) {
+/// // Buffer too small, written contains required size
+/// char *dynamic_buf = malloc(written);
+/// result = ghostty_key_encoder_encode(encoder, event, dynamic_buf, written, &written);
+/// assert(result == GHOSTTY_SUCCESS);
+/// write(pty_fd, dynamic_buf, written);
+/// free(dynamic_buf);
+/// }
+/// @endcode
+///
+/// @ingroup key
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyKeyEncoder,
+    GhosttyKeyEvent,
+    ffi.Pointer<ffi.Char>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_key_encoder_encode')
+external int _ghostty_key_encoder_encode(
+  GhosttyKeyEncoder encoder,
+  GhosttyKeyEvent event,
+  ffi.Pointer<ffi.Char> out_buf,
+  int out_buf_size,
+  ffi.Pointer<ffi.Size> out_len,
+);
+
+GhosttyResult ghostty_key_encoder_encode(
+  GhosttyKeyEncoder encoder,
+  GhosttyKeyEvent event,
+  ffi.Pointer<ffi.Char> out_buf,
+  int out_buf_size,
+  ffi.Pointer<ffi.Size> out_len,
+) => GhosttyResult.fromValue(
+  _ghostty_key_encoder_encode(encoder, event, out_buf, out_buf_size, out_len),
+);
+
+/// Create a new mouse event instance.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param event Pointer to store the created event handle
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup mouse
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyMouseEvent>,
+  )
+>(symbol: 'ghostty_mouse_event_new')
+external int _ghostty_mouse_event_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyMouseEvent> event,
+);
+
+GhosttyResult ghostty_mouse_event_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyMouseEvent> event,
+) => GhosttyResult.fromValue(_ghostty_mouse_event_new(allocator, event));
+
+/// Free a mouse event instance.
+///
+/// @param event The mouse event handle to free (may be NULL)
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEvent)>()
+external void ghostty_mouse_event_free(GhosttyMouseEvent event);
+
+/// Set the event action.
+///
+/// @param event The event handle, must not be NULL
+/// @param action The action to set
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEvent, ffi.UnsignedInt)>(
+  symbol: 'ghostty_mouse_event_set_action',
+)
+external void _ghostty_mouse_event_set_action(
+  GhosttyMouseEvent event,
+  int action,
+);
+
+void ghostty_mouse_event_set_action(
+  GhosttyMouseEvent event,
+  GhosttyMouseAction action,
+) => _ghostty_mouse_event_set_action(event, action.value);
+
+/// Get the event action.
+///
+/// @param event The event handle, must not be NULL
+/// @return The event action
+///
+/// @ingroup mouse
+@ffi.Native<ffi.UnsignedInt Function(GhosttyMouseEvent)>(
+  symbol: 'ghostty_mouse_event_get_action',
+)
+external int _ghostty_mouse_event_get_action(GhosttyMouseEvent event);
+
+GhosttyMouseAction ghostty_mouse_event_get_action(GhosttyMouseEvent event) =>
+    GhosttyMouseAction.fromValue(_ghostty_mouse_event_get_action(event));
+
+/// Set the event button.
+///
+/// This sets a concrete button identity for the event.
+/// To represent "no button" (for motion events), use
+/// ghostty_mouse_event_clear_button().
+///
+/// @param event The event handle, must not be NULL
+/// @param button The button to set
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEvent, ffi.UnsignedInt)>(
+  symbol: 'ghostty_mouse_event_set_button',
+)
+external void _ghostty_mouse_event_set_button(
+  GhosttyMouseEvent event,
+  int button,
+);
+
+void ghostty_mouse_event_set_button(
+  GhosttyMouseEvent event,
+  GhosttyMouseButton button,
+) => _ghostty_mouse_event_set_button(event, button.value);
+
+/// Clear the event button.
+///
+/// This sets the event button to "none".
+///
+/// @param event The event handle, must not be NULL
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEvent)>()
+external void ghostty_mouse_event_clear_button(GhosttyMouseEvent event);
+
+/// Get the event button.
+///
+/// @param event The event handle, must not be NULL
+/// @param out_button Output pointer for the button value (may be NULL)
+/// @return true if a button is set, false if no button is set
+///
+/// @ingroup mouse
+@ffi.Native<
+  ffi.Bool Function(GhosttyMouseEvent, ffi.Pointer<ffi.UnsignedInt>)
+>()
+external bool ghostty_mouse_event_get_button(
+  GhosttyMouseEvent event,
+  ffi.Pointer<ffi.UnsignedInt> out_button,
+);
+
+/// Set keyboard modifiers held during the event.
+///
+/// @param event The event handle, must not be NULL
+/// @param mods Modifier bitmask
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEvent, GhosttyMods)>()
+external void ghostty_mouse_event_set_mods(GhosttyMouseEvent event, int mods);
+
+/// Get keyboard modifiers held during the event.
+///
+/// @param event The event handle, must not be NULL
+/// @return Modifier bitmask
+///
+/// @ingroup mouse
+@ffi.Native<GhosttyMods Function(GhosttyMouseEvent)>()
+external int ghostty_mouse_event_get_mods(GhosttyMouseEvent event);
+
+/// Set the event position in surface-space pixels.
+///
+/// @param event The event handle, must not be NULL
+/// @param position The position to set
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEvent, GhosttyMousePosition)>()
+external void ghostty_mouse_event_set_position(
+  GhosttyMouseEvent event,
+  GhosttyMousePosition position,
+);
+
+/// Get the event position in surface-space pixels.
+///
+/// @param event The event handle, must not be NULL
+/// @return The current event position
+///
+/// @ingroup mouse
+@ffi.Native<GhosttyMousePosition Function(GhosttyMouseEvent)>()
+external GhosttyMousePosition ghostty_mouse_event_get_position(
+  GhosttyMouseEvent event,
+);
+
+/// Create a new mouse encoder instance.
+///
+/// @param allocator Pointer to allocator, or NULL to use the default allocator
+/// @param encoder Pointer to store the created encoder handle
+/// @return GHOSTTY_SUCCESS on success, or an error code on failure
+///
+/// @ingroup mouse
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<GhosttyAllocator>,
+    ffi.Pointer<GhosttyMouseEncoder>,
+  )
+>(symbol: 'ghostty_mouse_encoder_new')
+external int _ghostty_mouse_encoder_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyMouseEncoder> encoder,
+);
+
+GhosttyResult ghostty_mouse_encoder_new(
+  ffi.Pointer<GhosttyAllocator> allocator,
+  ffi.Pointer<GhosttyMouseEncoder> encoder,
+) => GhosttyResult.fromValue(_ghostty_mouse_encoder_new(allocator, encoder));
+
+/// Free a mouse encoder instance.
+///
+/// @param encoder The encoder handle to free (may be NULL)
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEncoder)>()
+external void ghostty_mouse_encoder_free(GhosttyMouseEncoder encoder);
+
+/// Set an option on the mouse encoder.
+///
+/// A null pointer value does nothing. It does not reset to defaults.
+///
+/// @param encoder The encoder handle, must not be NULL
+/// @param option The option to set
+/// @param value Pointer to option value (type depends on option)
+///
+/// @ingroup mouse
+@ffi.Native<
+  ffi.Void Function(GhosttyMouseEncoder, ffi.UnsignedInt, ffi.Pointer<ffi.Void>)
+>(symbol: 'ghostty_mouse_encoder_setopt')
+external void _ghostty_mouse_encoder_setopt(
+  GhosttyMouseEncoder encoder,
+  int option,
+  ffi.Pointer<ffi.Void> value,
+);
+
+void ghostty_mouse_encoder_setopt(
+  GhosttyMouseEncoder encoder,
+  GhosttyMouseEncoderOption option,
+  ffi.Pointer<ffi.Void> value,
+) => _ghostty_mouse_encoder_setopt(encoder, option.value, value);
+
+/// Set encoder options from a terminal's current state.
+///
+/// This sets tracking mode and output format from terminal state.
+/// It does not modify size or any-button state.
+///
+/// @param encoder The encoder handle, must not be NULL
+/// @param terminal The terminal handle, must not be NULL
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEncoder, GhosttyTerminal)>()
+external void ghostty_mouse_encoder_setopt_from_terminal(
+  GhosttyMouseEncoder encoder,
+  GhosttyTerminal terminal,
+);
+
+/// Reset internal encoder state.
+///
+/// This clears motion deduplication state (last tracked cell).
+///
+/// @param encoder The encoder handle (may be NULL)
+///
+/// @ingroup mouse
+@ffi.Native<ffi.Void Function(GhosttyMouseEncoder)>()
+external void ghostty_mouse_encoder_reset(GhosttyMouseEncoder encoder);
+
+/// Encode a mouse event into a terminal escape sequence.
+///
+/// Not all mouse events produce output. In such cases this returns
+/// GHOSTTY_SUCCESS with out_len set to 0.
+///
+/// If the output buffer is too small, this returns GHOSTTY_OUT_OF_SPACE
+/// and out_len contains the required size.
+///
+/// @param encoder The encoder handle, must not be NULL
+/// @param event The mouse event to encode, must not be NULL
+/// @param out_buf Buffer to write encoded bytes to, or NULL to query required size
+/// @param out_buf_size Size of out_buf in bytes
+/// @param out_len Pointer to store bytes written (or required bytes on failure)
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if buffer is too small,
+/// or another error code
+///
+/// @ingroup mouse
+@ffi.Native<
+  ffi.Int Function(
+    GhosttyMouseEncoder,
+    GhosttyMouseEvent,
+    ffi.Pointer<ffi.Char>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_mouse_encoder_encode')
+external int _ghostty_mouse_encoder_encode(
+  GhosttyMouseEncoder encoder,
+  GhosttyMouseEvent event,
+  ffi.Pointer<ffi.Char> out_buf,
+  int out_buf_size,
+  ffi.Pointer<ffi.Size> out_len,
+);
+
+GhosttyResult ghostty_mouse_encoder_encode(
+  GhosttyMouseEncoder encoder,
+  GhosttyMouseEvent event,
+  ffi.Pointer<ffi.Char> out_buf,
+  int out_buf_size,
+  ffi.Pointer<ffi.Size> out_len,
+) => GhosttyResult.fromValue(
+  _ghostty_mouse_encoder_encode(encoder, event, out_buf, out_buf_size, out_len),
+);
+
+/// Check if paste data is safe to paste into the terminal.
+///
+/// Data is considered unsafe if it contains:
+/// - Newlines (`\n`) which can inject commands
+/// - The bracketed paste end sequence (`\x1b[201~`) which can be used
+/// to exit bracketed paste mode and inject commands
+///
+/// This check is conservative and considers data unsafe regardless of
+/// current terminal state.
+///
+/// @param data The paste data to check (must not be NULL)
+/// @param len The length of the data in bytes
+/// @return true if the data is safe to paste, false otherwise
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Char>, ffi.Size)>()
+external bool ghostty_paste_is_safe(ffi.Pointer<ffi.Char> data, int len);
+
+/// Encode a terminal size report into an escape sequence.
+///
+/// Encodes a size report in the format specified by @p style into the
+/// provided buffer.
+///
+/// If the buffer is too small, the function returns GHOSTTY_OUT_OF_SPACE
+/// and writes the required buffer size to @p out_written. The caller can
+/// then retry with a sufficiently sized buffer.
+///
+/// @param style The size report format to encode
+/// @param size Terminal size information
+/// @param buf Output buffer to write the encoded sequence into (may be NULL)
+/// @param buf_len Size of the output buffer in bytes
+/// @param[out] out_written On success, the number of bytes written. On
+/// GHOSTTY_OUT_OF_SPACE, the required buffer size.
+/// @return GHOSTTY_SUCCESS on success, GHOSTTY_OUT_OF_SPACE if the buffer
+/// is too small
+@ffi.Native<
+  ffi.Int Function(
+    ffi.UnsignedInt,
+    GhosttySizeReportSize,
+    ffi.Pointer<ffi.Char>,
+    ffi.Size,
+    ffi.Pointer<ffi.Size>,
+  )
+>(symbol: 'ghostty_size_report_encode')
+external int _ghostty_size_report_encode(
+  int style,
+  GhosttySizeReportSize size,
+  ffi.Pointer<ffi.Char> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+);
+
+GhosttyResult ghostty_size_report_encode(
+  GhosttySizeReportStyle style,
+  GhosttySizeReportSize size,
+  ffi.Pointer<ffi.Char> buf,
+  int buf_len,
+  ffi.Pointer<ffi.Size> out_written,
+) => GhosttyResult.fromValue(
+  _ghostty_size_report_encode(style.value, size, buf, buf_len, out_written),
+);
 
 /// Result codes for libghostty-vt operations.
 enum GhosttyResult {

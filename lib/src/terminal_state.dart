@@ -2,11 +2,9 @@ import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'ghostty_bindings.g.dart';
-import 'ghostty.dart';
 import 'pty_ffi.dart';
 
 class TerminalState {
-  final GhosttyBindings _b;
   final PtyFfi _pty;
 
   late GhosttyTerminal _terminal;
@@ -30,9 +28,7 @@ class TerminalState {
   final Pointer<Uint32> _graphemeBuf = calloc<Uint32>(32);
   final Pointer<Uint32> _graphemeLen = calloc<Uint32>();
 
-  TerminalState(Ghostty ghostty)
-      : _b = ghostty.bindings,
-        _pty = PtyFfi();
+  TerminalState() : _pty = PtyFfi();
 
   void init(int cols, int rows) {
     this.cols = cols;
@@ -44,44 +40,44 @@ class TerminalState {
     opts.ref.cols = cols;
     opts.ref.rows = rows;
     opts.ref.max_scrollback = 10000;
-    _b.ghostty_terminal_new(nullptr, termPtr, opts.ref);
+    ghostty_terminal_new(nullptr, termPtr, opts.ref);
     _terminal = termPtr.value;
     calloc.free(opts);
     calloc.free(termPtr);
 
     // Create render state
     final rsPtr = calloc<GhosttyRenderState>();
-    _b.ghostty_render_state_new(nullptr, rsPtr);
+    ghostty_render_state_new(nullptr, rsPtr);
     _renderState = rsPtr.value;
     calloc.free(rsPtr);
 
     // Create row iterator
     _rowIteratorPtr = calloc<GhosttyRenderStateRowIterator>();
-    _b.ghostty_render_state_row_iterator_new(nullptr, _rowIteratorPtr);
+    ghostty_render_state_row_iterator_new(nullptr, _rowIteratorPtr);
 
     // Create row cells
     _rowCellsPtr = calloc<GhosttyRenderStateRowCells>();
-    _b.ghostty_render_state_row_cells_new(nullptr, _rowCellsPtr);
+    ghostty_render_state_row_cells_new(nullptr, _rowCellsPtr);
 
     // Create key encoder + event
     final kePtr = calloc<Pointer<GhosttyKeyEncoder$1>>();
-    _b.ghostty_key_encoder_new(nullptr, kePtr);
+    ghostty_key_encoder_new(nullptr, kePtr);
     _keyEncoder = kePtr.value;
     calloc.free(kePtr);
 
     final kevtPtr = calloc<Pointer<GhosttyKeyEvent$1>>();
-    _b.ghostty_key_event_new(nullptr, kevtPtr);
+    ghostty_key_event_new(nullptr, kevtPtr);
     _keyEvent = kevtPtr.value;
     calloc.free(kevtPtr);
 
     // Create mouse encoder + event
     final mePtr = calloc<Pointer<GhosttyMouseEncoder$1>>();
-    _b.ghostty_mouse_encoder_new(nullptr, mePtr);
+    ghostty_mouse_encoder_new(nullptr, mePtr);
     _mouseEncoder = mePtr.value;
     calloc.free(mePtr);
 
     final mevtPtr = calloc<Pointer<GhosttyMouseEvent$1>>();
-    _b.ghostty_mouse_event_new(nullptr, mevtPtr);
+    ghostty_mouse_event_new(nullptr, mevtPtr);
     _mouseEvent = mevtPtr.value;
     calloc.free(mevtPtr);
 
@@ -93,14 +89,14 @@ class TerminalState {
 
   void dispose() {
     _pty.close(_ptyFd, _childPid);
-    _b.ghostty_mouse_event_free(_mouseEvent);
-    _b.ghostty_mouse_encoder_free(_mouseEncoder);
-    _b.ghostty_key_event_free(_keyEvent);
-    _b.ghostty_key_encoder_free(_keyEncoder);
-    _b.ghostty_render_state_row_cells_free(_rowCellsPtr.value);
-    _b.ghostty_render_state_row_iterator_free(_rowIteratorPtr.value);
-    _b.ghostty_render_state_free(_renderState);
-    _b.ghostty_terminal_free(_terminal);
+    ghostty_mouse_event_free(_mouseEvent);
+    ghostty_mouse_encoder_free(_mouseEncoder);
+    ghostty_key_event_free(_keyEvent);
+    ghostty_key_encoder_free(_keyEncoder);
+    ghostty_render_state_row_cells_free(_rowCellsPtr.value);
+    ghostty_render_state_row_iterator_free(_rowIteratorPtr.value);
+    ghostty_render_state_free(_renderState);
+    ghostty_terminal_free(_terminal);
     calloc.free(_readBuf);
     calloc.free(_keyBuf);
     calloc.free(_keyLen);
@@ -117,18 +113,18 @@ class TerminalState {
     while (true) {
       final n = _pty.read(_ptyFd, _readBuf, 65536);
       if (n <= 0) break;
-      _b.ghostty_terminal_vt_write(_terminal, _readBuf, n);
+      ghostty_terminal_vt_write(_terminal, _readBuf, n);
     }
   }
 
   void updateRenderState() {
-    _b.ghostty_render_state_update(_renderState, _terminal);
+    ghostty_render_state_update(_renderState, _terminal);
     _paletteDirty = true;
   }
 
   GhosttyRenderStateDirty getDirty() {
     final out = calloc<Int32>();
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_DIRTY,
       out.cast(),
@@ -141,7 +137,7 @@ class TerminalState {
   void setDirty(GhosttyRenderStateDirty dirty) {
     final val = calloc<Int32>();
     val.value = dirty.value;
-    _b.ghostty_render_state_set(
+    ghostty_render_state_set(
       _renderState,
       GhosttyRenderStateOption.GHOSTTY_RENDER_STATE_OPTION_DIRTY,
       val.cast(),
@@ -152,7 +148,7 @@ class TerminalState {
   GhosttyRenderStateColors getColors() {
     final colors = calloc<GhosttyRenderStateColors>();
     colors.ref.size = sizeOf<GhosttyRenderStateColors>();
-    _b.ghostty_render_state_colors_get(_renderState, colors);
+    ghostty_render_state_colors_get(_renderState, colors);
     final result = colors.ref;
     // Copy values before freeing - we need to return the struct by value
     // Actually GhosttyRenderStateColors is a Struct, return the pointer
@@ -169,12 +165,12 @@ class TerminalState {
   }();
 
   GhosttyRenderStateColors get colors {
-    _b.ghostty_render_state_colors_get(_renderState, _colorsPtr);
+    ghostty_render_state_colors_get(_renderState, _colorsPtr);
     return _colorsPtr.ref;
   }
 
   void populateRowIterator() {
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_ROW_ITERATOR,
       _rowIteratorPtr.cast(),
@@ -182,12 +178,12 @@ class TerminalState {
   }
 
   bool rowIteratorNext() {
-    return _b.ghostty_render_state_row_iterator_next(_rowIteratorPtr.value);
+    return ghostty_render_state_row_iterator_next(_rowIteratorPtr.value);
   }
 
   bool isRowDirty() {
     final out = calloc<Bool>();
-    _b.ghostty_render_state_row_get(
+    ghostty_render_state_row_get(
       _rowIteratorPtr.value,
       GhosttyRenderStateRowData.GHOSTTY_RENDER_STATE_ROW_DATA_DIRTY,
       out.cast(),
@@ -200,7 +196,7 @@ class TerminalState {
   void setRowDirty(bool dirty) {
     final val = calloc<Bool>();
     val.value = dirty;
-    _b.ghostty_render_state_row_set(
+    ghostty_render_state_row_set(
       _rowIteratorPtr.value,
       GhosttyRenderStateRowOption.GHOSTTY_RENDER_STATE_ROW_OPTION_DIRTY,
       val.cast(),
@@ -209,7 +205,7 @@ class TerminalState {
   }
 
   void populateRowCells() {
-    _b.ghostty_render_state_row_get(
+    ghostty_render_state_row_get(
       _rowIteratorPtr.value,
       GhosttyRenderStateRowData.GHOSTTY_RENDER_STATE_ROW_DATA_CELLS,
       _rowCellsPtr.cast(),
@@ -217,13 +213,13 @@ class TerminalState {
   }
 
   bool rowCellsNext() {
-    return _b.ghostty_render_state_row_cells_next(_rowCellsPtr.value);
+    return ghostty_render_state_row_cells_next(_rowCellsPtr.value);
   }
 
   GhosttyStyle getCellStyle() {
     final style = calloc<GhosttyStyle>();
     style.ref.size = sizeOf<GhosttyStyle>();
-    _b.ghostty_render_state_row_cells_get(
+    ghostty_render_state_row_cells_get(
       _rowCellsPtr.value,
       GhosttyRenderStateRowCellsData.GHOSTTY_RENDER_STATE_ROW_CELLS_DATA_STYLE,
       style.cast(),
@@ -241,7 +237,7 @@ class TerminalState {
   }();
 
   GhosttyStyle get cellStyle {
-    _b.ghostty_render_state_row_cells_get(
+    ghostty_render_state_row_cells_get(
       _rowCellsPtr.value,
       GhosttyRenderStateRowCellsData.GHOSTTY_RENDER_STATE_ROW_CELLS_DATA_STYLE,
       _stylePtr.cast(),
@@ -250,7 +246,7 @@ class TerminalState {
   }
 
   int getCellGraphemeLen() {
-    _b.ghostty_render_state_row_cells_get(
+    ghostty_render_state_row_cells_get(
       _rowCellsPtr.value,
       GhosttyRenderStateRowCellsData
           .GHOSTTY_RENDER_STATE_ROW_CELLS_DATA_GRAPHEMES_LEN,
@@ -261,7 +257,7 @@ class TerminalState {
 
   String getCellGrapheme(int len) {
     if (len == 0) return '';
-    _b.ghostty_render_state_row_cells_get(
+    ghostty_render_state_row_cells_get(
       _rowCellsPtr.value,
       GhosttyRenderStateRowCellsData
           .GHOSTTY_RENDER_STATE_ROW_CELLS_DATA_GRAPHEMES_BUF,
@@ -278,14 +274,14 @@ class TerminalState {
     if (newCols == cols && newRows == rows) return;
     cols = newCols;
     rows = newRows;
-    _b.ghostty_terminal_resize(_terminal, newCols, newRows);
+    ghostty_terminal_resize(_terminal, newCols, newRows);
     _pty.resize(_ptyFd, newCols, newRows);
   }
 
   // Cursor info
   bool get cursorVisible {
     final out = calloc<Bool>();
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_CURSOR_VISIBLE,
       out.cast(),
@@ -297,7 +293,7 @@ class TerminalState {
 
   bool get cursorInViewport {
     final out = calloc<Bool>();
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData
           .GHOSTTY_RENDER_STATE_DATA_CURSOR_VIEWPORT_HAS_VALUE,
@@ -310,7 +306,7 @@ class TerminalState {
 
   int get cursorX {
     final out = calloc<Uint16>();
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_CURSOR_VIEWPORT_X,
       out.cast(),
@@ -322,7 +318,7 @@ class TerminalState {
 
   int get cursorY {
     final out = calloc<Uint16>();
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_CURSOR_VIEWPORT_Y,
       out.cast(),
@@ -334,10 +330,9 @@ class TerminalState {
 
   GhosttyRenderStateCursorVisualStyle get cursorStyle {
     final out = calloc<Int32>();
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
-      GhosttyRenderStateData
-          .GHOSTTY_RENDER_STATE_DATA_CURSOR_VISUAL_STYLE,
+      GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_CURSOR_VISUAL_STYLE,
       out.cast(),
     );
     final val = GhosttyRenderStateCursorVisualStyle.fromValue(out.value);
@@ -346,27 +341,40 @@ class TerminalState {
   }
 
   // Key encoding
-  void encodeKeyAndWrite(GhosttyKey key, GhosttyKeyAction action,
-      int mods, String? text) {
-    _b.ghostty_key_encoder_setopt_from_terminal(_keyEncoder, _terminal);
-    _b.ghostty_key_event_set_key(_keyEvent, key);
-    _b.ghostty_key_event_set_action(_keyEvent, action);
-    _b.ghostty_key_event_set_mods(_keyEvent, mods);
+  void encodeKeyAndWrite(
+    GhosttyKey key,
+    GhosttyKeyAction action,
+    int mods,
+    String? text,
+  ) {
+    ghostty_key_encoder_setopt_from_terminal(_keyEncoder, _terminal);
+    ghostty_key_event_set_key(_keyEvent, key);
+    ghostty_key_event_set_action(_keyEvent, action);
+    ghostty_key_event_set_mods(_keyEvent, mods);
 
     if (text != null && text.isNotEmpty) {
       final utf8 = text.toNativeUtf8();
-      _b.ghostty_key_event_set_utf8(
-          _keyEvent, utf8.cast(), text.length);
-      final result = _b.ghostty_key_encoder_encode(
-          _keyEncoder, _keyEvent, _keyBuf.cast(), 256, _keyLen);
+      ghostty_key_event_set_utf8(_keyEvent, utf8.cast(), text.length);
+      final result = ghostty_key_encoder_encode(
+        _keyEncoder,
+        _keyEvent,
+        _keyBuf.cast(),
+        256,
+        _keyLen,
+      );
       calloc.free(utf8);
       if (result == GhosttyResult.GHOSTTY_SUCCESS && _keyLen.value > 0) {
         _pty.write(_ptyFd, _keyBuf, _keyLen.value);
       }
     } else {
-      _b.ghostty_key_event_set_utf8(_keyEvent, nullptr, 0);
-      final result = _b.ghostty_key_encoder_encode(
-          _keyEncoder, _keyEvent, _keyBuf.cast(), 256, _keyLen);
+      ghostty_key_event_set_utf8(_keyEvent, nullptr, 0);
+      final result = ghostty_key_encoder_encode(
+        _keyEncoder,
+        _keyEvent,
+        _keyBuf.cast(),
+        256,
+        _keyLen,
+      );
       if (result == GhosttyResult.GHOSTTY_SUCCESS && _keyLen.value > 0) {
         _pty.write(_ptyFd, _keyBuf, _keyLen.value);
       }
@@ -374,25 +382,35 @@ class TerminalState {
   }
 
   // Mouse encoding
-  void encodeMouseAndWrite(GhosttyMouseAction action,
-      GhosttyMouseButton button, int mods, double x, double y) {
-    _b.ghostty_mouse_encoder_setopt_from_terminal(_mouseEncoder, _terminal);
-    _b.ghostty_mouse_event_set_action(_mouseEvent, action);
+  void encodeMouseAndWrite(
+    GhosttyMouseAction action,
+    GhosttyMouseButton button,
+    int mods,
+    double x,
+    double y,
+  ) {
+    ghostty_mouse_encoder_setopt_from_terminal(_mouseEncoder, _terminal);
+    ghostty_mouse_event_set_action(_mouseEvent, action);
     if (button == GhosttyMouseButton.GHOSTTY_MOUSE_BUTTON_UNKNOWN) {
-      _b.ghostty_mouse_event_clear_button(_mouseEvent);
+      ghostty_mouse_event_clear_button(_mouseEvent);
     } else {
-      _b.ghostty_mouse_event_set_button(_mouseEvent, button);
+      ghostty_mouse_event_set_button(_mouseEvent, button);
     }
-    _b.ghostty_mouse_event_set_mods(_mouseEvent, mods);
+    ghostty_mouse_event_set_mods(_mouseEvent, mods);
 
     final pos = calloc<GhosttyMousePosition>();
     pos.ref.x = x;
     pos.ref.y = y;
-    _b.ghostty_mouse_event_set_position(_mouseEvent, pos.ref);
+    ghostty_mouse_event_set_position(_mouseEvent, pos.ref);
     calloc.free(pos);
 
-    final result = _b.ghostty_mouse_encoder_encode(
-        _mouseEncoder, _mouseEvent, _keyBuf.cast(), 256, _keyLen);
+    final result = ghostty_mouse_encoder_encode(
+      _mouseEncoder,
+      _mouseEvent,
+      _keyBuf.cast(),
+      256,
+      _keyLen,
+    );
     if (result == GhosttyResult.GHOSTTY_SUCCESS && _keyLen.value > 0) {
       _pty.write(_ptyFd, _keyBuf, _keyLen.value);
     }
@@ -403,8 +421,7 @@ class TerminalState {
     final event = gained
         ? GhosttyFocusEvent.GHOSTTY_FOCUS_GAINED
         : GhosttyFocusEvent.GHOSTTY_FOCUS_LOST;
-    final result = _b.ghostty_focus_encode(
-        event, _keyBuf.cast(), 256, _keyLen);
+    final result = ghostty_focus_encode(event, _keyBuf.cast(), 256, _keyLen);
     if (result == GhosttyResult.GHOSTTY_SUCCESS && _keyLen.value > 0) {
       _pty.write(_ptyFd, _keyBuf, _keyLen.value);
     }
@@ -416,13 +433,19 @@ class TerminalState {
     sv.ref.tagAsInt =
         GhosttyTerminalScrollViewportTag.GHOSTTY_SCROLL_VIEWPORT_DELTA.value;
     sv.ref.value.delta = delta;
-    _b.ghostty_terminal_scroll_viewport(_terminal, sv.ref);
+    ghostty_terminal_scroll_viewport(_terminal, sv.ref);
     calloc.free(sv);
   }
 
   // Update mouse encoder size
-  void setMouseEncoderSize(int screenWidth, int screenHeight, int cellWidth,
-      int cellHeight, int paddingLeft, int paddingTop) {
+  void setMouseEncoderSize(
+    int screenWidth,
+    int screenHeight,
+    int cellWidth,
+    int cellHeight,
+    int paddingLeft,
+    int paddingTop,
+  ) {
     final size = calloc<GhosttyMouseEncoderSize>();
     size.ref.size = sizeOf<GhosttyMouseEncoderSize>();
     size.ref.screen_width = screenWidth;
@@ -433,7 +456,7 @@ class TerminalState {
     size.ref.padding_top = paddingTop;
     size.ref.padding_right = 0;
     size.ref.padding_bottom = 0;
-    _b.ghostty_mouse_encoder_setopt(
+    ghostty_mouse_encoder_setopt(
       _mouseEncoder,
       GhosttyMouseEncoderOption.GHOSTTY_MOUSE_ENCODER_OPT_SIZE,
       size.cast(),
@@ -442,11 +465,13 @@ class TerminalState {
   }
 
   // Cache palette
-  late final Pointer<GhosttyColorRgb> _palettePtr = calloc<GhosttyColorRgb>(256);
+  late final Pointer<GhosttyColorRgb> _palettePtr = calloc<GhosttyColorRgb>(
+    256,
+  );
   bool _paletteDirty = true;
 
   void _refreshPalette() {
-    _b.ghostty_render_state_get(
+    ghostty_render_state_get(
       _renderState,
       GhosttyRenderStateData.GHOSTTY_RENDER_STATE_DATA_COLOR_PALETTE,
       _palettePtr.cast(),
