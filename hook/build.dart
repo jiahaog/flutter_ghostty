@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:code_assets/code_assets.dart';
 import 'package:hooks/hooks.dart';
 
-const _ghosttyAssetName = 'lib/src/ghostty_bindings.g.dart';
-const _ptyAssetName = 'lib/src/pty_ffi.dart';
+// @Native resolves bundled assets by package URI, which omits the leading lib/.
+const _ghosttyAssetName = 'src/ghostty_bindings.g.dart';
+const _ptyAssetName = 'src/pty_ffi.dart';
 
 Future<void> main(List<String> args) async {
   await build(args, (input, output) async {
